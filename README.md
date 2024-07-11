@@ -1,0 +1,2 @@
+# gagyebyuri
+OCR finencial ledger
