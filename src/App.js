@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Analysis from './pages/Analysis';
@@ -14,6 +14,20 @@ import NotFound from './pages/NotFound';
 import './App.css'; // App 컴포넌트의 스타일링을 위한 CSS 파일을 import
 
 function App() {
+
+  const [data, setData] = useState([{}])
+
+  useEffect(() => {
+    fetch("/members").then(
+      res => res.json()
+    ).then(
+      data => {
+        setData(data)
+        console.log(data);
+      }
+    )
+  }, [])
+
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
