@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Analysis from './pages/Analysis';
@@ -11,28 +11,57 @@ import MyPage from './pages/MyPage';
 import SemesterAnalysis from './pages/SemesterAnalysis';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import LoginModal from './components/LoginModal';
 import './App.css'; // App 컴포넌트의 스타일링을 위한 CSS 파일을 import
 
 function App() {
-
-  const [data, setData] = useState([{}])
+  const [darkMode, setDarkMode] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
-    fetch("/members").then(
-      res => res.json()
-    ).then(
-      data => {
-        setData(data)
-        console.log(data);
-      }
-    )
-  }, [])
+    fetch('http://localhost:5000/session', {
+      credentials: 'include',
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.is_logged_in) {
+          setIsLoggedIn(true);
+          setUsername(data.username);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }, []);
 
-  const [darkMode, setDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
     setDarkMode(prevMode => !prevMode);
     document.body.classList.toggle('dark-mode', !darkMode);
+  };
+
+   const handleLogin = (username) => {
+    setUsername(username);
+    setIsLoggedIn(true);
+    setIsModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    fetch('http://localhost:5000/logout', {
+      credentials: 'include',
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          setIsLoggedIn(false);
+          setUsername('');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   return (
@@ -43,7 +72,14 @@ function App() {
             <button onClick={toggleDarkMode} className="dark-mode-toggle">
               {darkMode ? 'Light Mode' : 'Dark Mode'}
             </button>
-            <button className="login-button">로그인</button>
+            {isLoggedIn ? (
+              <>
+                <span>Welcome, {username}</span>
+                <button onClick={handleLogout} className="logout-button">로그아웃</button>
+              </>
+            ) : (
+              <button onClick={() => setIsModalOpen(true)} className="login-button">로그인</button>
+            )}
           </header>
           <div className="content">
             <Routes>
@@ -60,6 +96,7 @@ function App() {
             </Routes>
           </div>
         </div>
+        <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onLogin={handleLogin} />
       </div>
   );
 }
