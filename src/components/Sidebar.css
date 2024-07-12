@@ -1,0 +1,130 @@
+/* Sidebar Container */
+.sidebar {
+    width: 60px;
+    height: 100vh;
+    background-color: #343a40;
+    position: fixed;
+    transition: width 0.3s;
+    overflow: hidden;
+    z-index: 1000; /* 사이드바를 다른 요소들 위에 렌더링 */
+}
+
+.sidebar:hover {
+    width: 200px;
+}
+
+.sidebar-logo {
+    display: flex;
+    padding: 10px 0;
+    text-align: center;
+    transition: padding 0.3s;
+}
+
+.sidebar-logo a {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.sidebar:hover .sidebar-logo {
+    padding: 30px 0;
+}
+
+
+.logo-image {
+    width: 50px; /* 이미지 너비 */
+    height: auto; /* 높이 자동 조정 */
+    border-radius: 50%; /* 원형 모양으로 이미지 잘라내기 */
+    transition: transform 0.3s, opacity 0.3s; /* 트랜지션 효과 */
+}
+
+.sidebar:hover .logo-image {
+    margin-left: 15px;
+    transform: scale(1.5); /* 호버 시 이미지 확대 */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* 흰색 그림자 추가하여 빛나는 효과 생성 */
+}
+
+.sidebar-logo span {
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    margin-left: 35px; /* 텍스트와 이미지 사이의 간격 조정 */
+}
+
+/* Show text on hover */
+.sidebar:hover .sidebar-logo span {
+    opacity: 1;
+}
+
+/* Sidebar Items */
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 19px;
+    position: relative;
+}
+
+.sidebar-item a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #fff;
+    width: 100%;
+}
+
+.sidebar-item i {
+    font-size: 24px;
+    margin-right: 20px;
+    transition: color 0.3s; /* 아이콘 색상 변경 트랜지션 */
+}
+
+.sidebar-item span {
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Show text on hover */
+.sidebar:hover .sidebar-item span {
+    opacity: 1;
+}
+
+/* Change background color on hover */
+.sidebar-item:hover {
+    background-color: #495057; /* 마우스 호버 시 배경색 변경 */
+}
+
+.sidebar-item:hover i {
+    color: #ffc107; /* 아이콘 색상 변경 */
+}
+
+.sidebar-item-header {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #fff;
+    width: 100%;
+    margin-left: 15px;
+}
+
+.sidebar-item-header span {
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.sidebar:hover .sidebar-item-header span {
+    opacity: 1;
+}
+
+.sidebar-item i {
+    width: 20px; /* 아이콘의 고정 너비 설정 */
+    display: flex;
+    justify-content: center; /* 아이콘을 가운데 정렬 */
+    align-items: center; /* 아이콘을 가운데 정렬 */
+  }
+
+/* Font Awesome Icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
