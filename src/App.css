@@ -33,7 +33,7 @@ h1 {
   left: 60px; /* 사이드바 너비만큼 여백 추가 */
   right: 0;
   height: 60px; /* 헤더 높이 */
-  color: #fff;
+  color: #020202;
   display: flex;
   align-items: center;
   justify-content: flex-end;
