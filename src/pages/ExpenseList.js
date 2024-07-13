@@ -1,9 +1,12 @@
+// ExpenseList.js
+
 import React, { useState } from 'react';
 import Modal from './ExpenseModal';
+import './ExpenseModal.css'; // ExpenseModal.css 파일을 임포트
 
 const ExpenseList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [ExpenseData, setExpenseData] = useState(null);
+  const [expenseData, setExpenseData] = useState(null);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -24,7 +27,7 @@ const ExpenseList = () => {
       {/* 지출 내역을 표시하는 코드 */}
       <button onClick={handleOpenModal}>추가</button>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleModalSubmit} />
-      {ExpenseData && <p>입력된 값: {ExpenseData}</p>}
+      {expenseData && <p>입력된 값: {expenseData}</p>}
     </div>
   );
 };

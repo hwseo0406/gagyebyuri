@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Analysis from './pages/Analysis';
 import CustomerService from './pages/CustomerService';
@@ -11,14 +11,15 @@ import MyPage from './pages/MyPage';
 import SemesterAnalysis from './pages/SemesterAnalysis';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
-import LoginModal from './components/LoginModal';
+import Register from './pages/Register';
+import LoginPage from './pages/LoginPage';
 import './App.css'; // App 컴포넌트의 스타일링을 위한 CSS 파일을 import
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('http://localhost:5000/session', {
@@ -26,15 +27,17 @@ function App() {
     })
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         if (data.is_logged_in) {
+          console.log('서버로부터 받은 데이터:', data);
           setIsLoggedIn(true);
-          setUsername(data.username);
+          setName(data.name);
         }
       })
       .catch(error => {
         console.error('Error:', error);
       });
-  }, []);
+  }, [isLoggedIn]);
 
 
   const toggleDarkMode = () => {
@@ -42,10 +45,9 @@ function App() {
     document.body.classList.toggle('dark-mode', !darkMode);
   };
 
-   const handleLogin = (username) => {
-    setUsername(username);
+  const handleLogin = (name) => {
+    setName(name);
     setIsLoggedIn(true);
-    setIsModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -56,7 +58,7 @@ function App() {
       .then(data => {
         if (data.success) {
           setIsLoggedIn(false);
-          setUsername('');
+          setName('');
         }
       })
       .catch(error => {
@@ -74,15 +76,17 @@ function App() {
             </button>
             {isLoggedIn ? (
               <>
-                <span>Welcome, {username}</span>
+                <span>Welcome, {name}</span>
                 <button onClick={handleLogout} className="logout-button">로그아웃</button>
               </>
             ) : (
-              <button onClick={() => setIsModalOpen(true)} className="login-button">로그인</button>
+              <button onClick={() => navigate('/login')} className="login-button">로그인</button>
             )}
           </header>
           <div className="content">
             <Routes>
+              <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+              <Route path="/Register" element={<Register />} />
               <Route path="/analysis/income-expense" element={<Analysis />} />
               <Route path="/account/customer-service" element={<CustomerService />} />
               <Route path="/management/excel" element={<Excel />} />
@@ -96,7 +100,6 @@ function App() {
             </Routes>
           </div>
         </div>
-        <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onLogin={handleLogin} />
       </div>
   );
 }
