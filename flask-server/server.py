@@ -25,6 +25,8 @@ app = Flask(__name__)
 #다른 도메인에서 요청을 허용
 CORS(app, supports_credentials=True)
 app.secret_key = SECRET_KEY
+app.config['SESSION_KEY_PREFIX'] = 'gagye_byuri_'
+
 bcrypt = Bcrypt(app)
 
 UPLOAD_FOLDER = 'uploads'
@@ -102,17 +104,17 @@ def upload_income():
 @app.route('/save', methods=['POST'])
 def save_data():
     data = request.json
-    nickname = data.get('nickname')
+    id = data.get('id')
     gpt_result = data.get('gptResult')
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
         # 가계부 데이터 저장
         sql = """
-        INSERT INTO receipts (nickname, store_name, purchase_date, total_cost)
+        INSERT INTO receipts (id, store_name, purchase_date, total_cost)
         VALUES (%s, %s, %s, %s)
         """
-        cursor.execute(sql, (nickname, gpt_result['store_name'], gpt_result['purchase_date'], gpt_result['total_cost']))
+        cursor.execute(sql, (id, gpt_result['store_name'], gpt_result['purchase_date'], gpt_result['total_cost']))
         receipt_id = cursor.lastrowid
         
         # 항목 데이터 저장
@@ -130,17 +132,17 @@ def save_data():
 @app.route('/incomesave', methods=['POST'])
 def save_data_income():
     data = request.json
-    nickname = data.get('nickname')
+    id = data.get('id')
     gpt_result = data.get('gptResult_income')
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
         # 가계부 데이터 저장
         sql = """
-        INSERT INTO account (nickname, owner_name, account_balance)
+        INSERT INTO account (id, owner_name, account_balance)
         VALUES (%s, %s, %s)
         """
-        cursor.execute(sql, (nickname, gpt_result['owner_name'], gpt_result['account_balance']))
+        cursor.execute(sql, (id, gpt_result['owner_name'], gpt_result['account_balance']))
         account_id = cursor.lastrowid
         
         # 항목 데이터 저장
@@ -156,33 +158,33 @@ def save_data_income():
     return jsonify({'message': '데이터 저장 성공'})
 
 # 지출내역 보여주기
-@app.route('/ExpenseList/<nickname>', methods=['GET'])
-def get_receipts(nickname):
+@app.route('/ExpenseList/<id>', methods=['GET'])
+def get_receipts(id):
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = """
         SELECT r.id, r.store_name, r.purchase_date, r.total_cost
         FROM receipts r
-        WHERE r.nickname = %s
+        WHERE r.id = %s
         """
 
-        cursor.execute(sql, (nickname,))
+        cursor.execute(sql, (id,))
         receipts = cursor.fetchall()
         
         sql2 = '''
         SELECT SUM(r.total_cost) as total
         FROM receipts r
-        WHERE r.nickname = %s
+        WHERE r.id = %s
         '''
-        cursor.execute(sql2, (nickname,))
+        cursor.execute(sql2, (id,))
         total = cursor.fetchone()
         
     connection.close()
     return jsonify({"receipts": receipts,  "total": total["total"]})
 
 # 수익 내역 보여주기
-@app.route('/income_list/<nickname>', methods = ['GET'])
-def get_income_list(nickname):
+@app.route('/income_list/<id>', methods = ['GET'])
+def get_income_list(id):
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
@@ -190,9 +192,9 @@ def get_income_list(nickname):
         select i.sender_name, i.amount
         from income i join account a 
         on i.account_id = a.id 
-        where a.nickname = %s
+        where a.id = %s
         '''
-        cursor.execute(sql, (nickname,))
+        cursor.execute(sql, (id,))
         account = cursor.fetchall()
     
     connection.close()
@@ -303,7 +305,7 @@ def register():
     data = request.get_json()
     id = data.get('id')
     password = data.get('password')
-    nickname = data.get('nickname') 
+    name = data.get('name') 
 
     # 비밀번호 해싱
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -313,18 +315,18 @@ def register():
     try:
         with connection.cursor() as cursor:
             # 사용자가 이미 존재하는지 확인
-            sql = "SELECT * FROM users WHERE nickname=%s"
-            cursor.execute(sql, (nickname,))
+            sql = "SELECT * FROM users WHERE id=%s"
+            cursor.execute(sql, (id,))
             result = cursor.fetchone()
             if result:
-                return jsonify({'success': False, 'error': 'Username already exists'})
+                return jsonify({'success': False, 'error': 'User already exists'})
 
             # 새로운 사용자 추가
-            sql = "INSERT INTO users (nickname, id, password) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (nickname, id, hashed_password ))
+            sql = "INSERT INTO users (id, password, name) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (id, hashed_password, name ))
             connection.commit()
 
-            return jsonify({'success': True, 'nickname': nickname, 'id': id})
+            return jsonify({'success': True, 'name': name})
     finally:
         connection.close()
 
@@ -346,8 +348,10 @@ def login():
             user = cursor.fetchone()
             if user and bcrypt.check_password_hash(user['password'], password):
                 # 비밀번호 일치 -> 로그인 성공
-                session['nickname'] = user['nickname']
-                return jsonify({'success': True, 'id': id})
+                session['id'] = user['id']
+                session['name'] = user['name']
+                print(session)
+                return jsonify({'success': True, 'name': user['name']})
             else:
                 # 비밀번호 불일치 혹은 사용자가 존재하지 않음 -> 로그인 실패
                 return jsonify({'success': False, 'error': 'Invalid id or password'})
@@ -357,15 +361,41 @@ def login():
 # 로그아웃
 @app.route('/logout')
 def logout():
-    session.pop('nickname', None)
+    session.pop('id', None)
+    session.pop('name', None)
     return jsonify({'success': True})
 
 # 세션 확인
 @app.route('/session')
 def session_status():
-    if 'nickname' in session:
-        return jsonify({'is_logged_in': True, 'nickname': session['nickname']})
+    print(session)
+    if 'id' in session:
+        return jsonify({'is_logged_in': True, 'id': session['id'], 'name': session['name']})
     return jsonify({'is_logged_in': False})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# 아이디 중복 검사
+@app.route('/idcheck', methods=['POST'])
+def login():
+    data = request.get_json()
+    id = data.get('id')
+
+    # 데이터베이스 연결
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # 사용자 정보 가져오기
+            sql = "SELECT id FROM users WHERE id=%s"
+            cursor.execute(sql, (id,))
+            
+            user = cursor.fetchone()
+            if id and user[id]:
+                # 아이디 일치 -> 중복
+                return jsonify({'success': False, 'error': 'Invalid id'})
+            else:
+                # 아이디 불일치 -> 회원가입 가능
+                return jsonify({'success': True, 'id': id})
+    finally:
+        connection.close()
