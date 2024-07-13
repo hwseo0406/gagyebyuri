@@ -9,6 +9,7 @@ import json
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+from datetime import timedelta
 
 #환경변수
 load_dotenv() 
@@ -26,7 +27,8 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 app.secret_key = SECRET_KEY
 app.config['SESSION_KEY_PREFIX'] = 'gagye_byuri_'
-
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 bcrypt = Bcrypt(app)
 
 UPLOAD_FOLDER = 'uploads'
@@ -46,7 +48,7 @@ def get_db_connection():
     )
     return connection
 
-#가계부 관리 기능
+#가계부 관리기능
 #파일을 업로드하면 저장하고, OCR 및 GPT API를 통해 텍스트를 분석
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -104,17 +106,17 @@ def upload_income():
 @app.route('/save', methods=['POST'])
 def save_data():
     data = request.json
-    id = data.get('id')
+    nickname = data.get('nickname')
     gpt_result = data.get('gptResult')
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
         # 가계부 데이터 저장
         sql = """
-        INSERT INTO receipts (id, store_name, purchase_date, total_cost)
+        INSERT INTO receipts (nickname, store_name, purchase_date, total_cost)
         VALUES (%s, %s, %s, %s)
         """
-        cursor.execute(sql, (id, gpt_result['store_name'], gpt_result['purchase_date'], gpt_result['total_cost']))
+        cursor.execute(sql, (nickname, gpt_result['store_name'], gpt_result['purchase_date'], gpt_result['total_cost']))
         receipt_id = cursor.lastrowid
         
         # 항목 데이터 저장
@@ -132,17 +134,17 @@ def save_data():
 @app.route('/incomesave', methods=['POST'])
 def save_data_income():
     data = request.json
-    id = data.get('id')
+    nickname = data.get('nickname')
     gpt_result = data.get('gptResult_income')
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
         # 가계부 데이터 저장
         sql = """
-        INSERT INTO account (id, owner_name, account_balance)
+        INSERT INTO account (nickname, owner_name, account_balance)
         VALUES (%s, %s, %s)
         """
-        cursor.execute(sql, (id, gpt_result['owner_name'], gpt_result['account_balance']))
+        cursor.execute(sql, (nickname, gpt_result['owner_name'], gpt_result['account_balance']))
         account_id = cursor.lastrowid
         
         # 항목 데이터 저장
@@ -158,47 +160,176 @@ def save_data_income():
     return jsonify({'message': '데이터 저장 성공'})
 
 # 지출내역 보여주기
-@app.route('/ExpenseList/<id>', methods=['GET'])
-def get_receipts(id):
+@app.route('/ExpenseList/<nickname>', methods=['GET'])
+def get_receipts(nickname):
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = """
         SELECT r.id, r.store_name, r.purchase_date, r.total_cost
         FROM receipts r
-        WHERE r.id = %s
+        WHERE r.nickname = %s
         """
 
-        cursor.execute(sql, (id,))
+        cursor.execute(sql, (nickname,))
         receipts = cursor.fetchall()
         
         sql2 = '''
         SELECT SUM(r.total_cost) as total
         FROM receipts r
-        WHERE r.id = %s
+        WHERE r.nickname = %s
         '''
-        cursor.execute(sql2, (id,))
+        cursor.execute(sql2, (nickname,))
         total = cursor.fetchone()
         
     connection.close()
     return jsonify({"receipts": receipts,  "total": total["total"]})
 
 # 수익 내역 보여주기
-@app.route('/income_list/<id>', methods = ['GET'])
-def get_income_list(id):
+@app.route('/income_list/<nickname>', methods = ['GET'])
+def get_income_list(nickname):
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = '''
-        select i.sender_name, i.amount
+        select i.id, i.sender_name, i.amount
         from income i join account a 
         on i.account_id = a.id 
-        where a.id = %s
+        where a.nickname = %s
         '''
-        cursor.execute(sql, (id,))
+        cursor.execute(sql, (nickname,))
         account = cursor.fetchall()
     
     connection.close()
     return jsonify(account)
+
+# 수입 업데이트
+@app.route('/update_income/<int:id>', methods=['PUT'])
+def update_income(id):
+    data = request.json
+    sender_name = data.get('sender_name')
+    amount = data.get('amount')
+
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        sql = """
+        UPDATE income
+        SET sender_name = %s, amount = %s
+        WHERE id = %s
+        """
+        cursor.execute(sql, (sender_name, amount, id))
+    
+    connection.commit()
+    connection.close()
+    return jsonify({'message': '수입 내역 수정 성공'})
+
+# 수익 삭제
+@app.route('/delete_income/<int:id>', methods=['DELETE'])
+def delete_income(id):
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        sql = "DELETE FROM income WHERE id = %s"
+        cursor.execute(sql, (id,))
+    
+    connection.commit()
+    connection.close()
+    return jsonify({'message': '수입 내역 삭제 성공'})
+
+# 영수증 수정
+@app.route('/update_receipt/<int:id>', methods=['PUT'])
+def update_receipt(id):
+    data = request.json
+    store_name = data.get('store_name')
+    purchase_date = data.get('purchase_date')
+    total_cost = data.get('total_cost')
+    items = data.get('items', [])
+
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        sql = """
+        UPDATE receipts
+        SET store_name = %s, purchase_date = %s, total_cost = %s
+        WHERE id = %s
+        """
+        cursor.execute(sql, (store_name, purchase_date, total_cost, id))
+
+        for item in items:
+            if 'id' in item:
+                sql = """
+                UPDATE items
+                SET item_name = %s, quantity = %s, amount = %s
+                WHERE id = %s
+                """
+                cursor.execute(sql, (item['item_name'], item['quantity'], item['amount'], item['id']))
+            else:
+                sql = """
+                INSERT INTO items (receipt_id, item_name, quantity, amount)
+                VALUES (%s, %s, %s, %s)
+                """
+                cursor.execute(sql, (id, item['item_name'], item['quantity'], item['amount']))
+
+    connection.commit()
+    connection.close()
+    return jsonify({'message': '지출 내역 수정 성공'})
+
+# 영수증 삭제
+@app.route('/delete_receipt/<int:id>', methods=['DELETE'])
+def delete_receipt(id):
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        sql = "DELETE FROM items WHERE receipt_id = %s"
+        cursor.execute(sql, (id,))
+        sql = "DELETE FROM receipts WHERE id = %s"
+        cursor.execute(sql, (id,))
+    
+    connection.commit()
+    connection.close()
+    return jsonify({'message': '지출 내역 삭제 성공'})
+
+@app.route('/delete_item/<int:id>', methods = ['DELETE'])
+def delete_item(id):
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        sql = "DELETE FROM items WHERE id = %s"
+        cursor.execute(sql, (id,))
+    
+    connection.commit()
+    connection.close()
+    return jsonify({'message': '삭제 성공'})
+
+@app.route('/get_receipt/<int:id>', methods=['GET'])
+def get_receipt(id):
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        sql = """
+        SELECT r.store_name, r.purchase_date, r.total_cost, i.id as item_id, i.item_name, i.quantity, i.amount
+        FROM receipts r
+        LEFT JOIN items i ON r.id = i.receipt_id
+        WHERE r.id = %s
+        """
+        cursor.execute(sql, (id,))
+        rows = cursor.fetchall()
+    
+    if not rows:
+        return jsonify({'error': 'Receipt not found'}), 404
+
+    receipt = {
+        'store_name': rows[0]['store_name'],
+        'purchase_date': rows[0]['purchase_date'],
+        'total_cost': rows[0]['total_cost'],
+        'items': []
+    }
+
+    for row in rows:
+        if row['item_id']:
+            receipt['items'].append({
+                'id': row['item_id'],
+                'item_name': row['item_name'],
+                'quantity': row['quantity'],
+                'amount': row['amount']
+            })
+
+    connection.close()
+    return jsonify(receipt)
 
 # 네이버 OCR 텍스트 추출
 def ocr_image(image_path):
@@ -350,8 +481,9 @@ def login():
                 # 비밀번호 일치 -> 로그인 성공
                 session['id'] = user['id']
                 session['name'] = user['name']
+                session.permanent = True
                 print(session)
-                return jsonify({'success': True, 'name': user['name']})
+                return jsonify({'success': True, 'id': user['id'], 'name': user['name']})
             else:
                 # 비밀번호 불일치 혹은 사용자가 존재하지 않음 -> 로그인 실패
                 return jsonify({'success': False, 'error': 'Invalid id or password'})
@@ -361,9 +493,10 @@ def login():
 # 로그아웃
 @app.route('/logout')
 def logout():
-    session.pop('id', None)
-    session.pop('name', None)
-    return jsonify({'success': True})
+    id = session.get("id")
+    if id:
+        session.clear()
+        return jsonify({'success': True})
 
 # 세션 확인
 @app.route('/session')
