@@ -496,7 +496,7 @@ def logout():
     
     # 아이디 중복 검사
 @app.route('/idcheck', methods=['POST'])
-def login():
+def id_check():
     data = request.get_json()
     id = data.get('id')
 

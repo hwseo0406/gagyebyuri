@@ -10,11 +10,12 @@ const IncomeList = () => {
   const [nickname, setNickname] = useState('');
 
   useEffect(() => {
-    if (nickname) {
-      fetchIncomes(nickname);
+    const storedNickname = sessionStorage.getItem('id');
+    if (storedNickname) {
+      setNickname(storedNickname);
+      fetchIncomes(nickname)
     }
   }, [nickname]);
-
   const fetchIncomes = async (nickname) => {
     try {
       const response = await axios.get(`http://localhost:5000/income_list/${nickname}`);
@@ -69,13 +70,6 @@ const IncomeList = () => {
   return (
     <div>
       <h1>수입 내역</h1>
-      <input
-        type="text"
-        placeholder="닉네임"
-        value={nickname}
-        onChange={handleNicknameChange}
-      />
-      <button onClick={() => fetchIncomes(nickname)}>조회</button>
       <button onClick={() => handleOpenModal()}>추가</button>
       <IncomeModal
         isOpen={isModalOpen}
