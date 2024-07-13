@@ -38,15 +38,17 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div className="login-page">
-      <h2>로그인</h2>
-      <form onSubmit={handleLogin}>
-        <input type="text" placeholder="아이디" value={id} onChange={(e) => setId(e.target.value)} />
-        <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button type="submit">로그인</button>
-        {error && <p className="error">{error}</p>}
-      </form>
-      <div>
-        계정이 없으신가요? <Link to="/register">회원가입</Link>
+      <div className="login-content">
+        <h2>로그인</h2>
+        <form onSubmit={handleLogin}>
+          <input type="text" placeholder="아이디" value={id} onChange={(e) => setId(e.target.value)} className="id-field"/>
+          <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <button type="submit">로그인</button>
+          {error && <p className="error">{error}</p>}
+        </form>
+        <div>
+          계정이 없으신가요? <Link to="/register">회원가입</Link>
+        </div>
       </div>
     </div>
   );

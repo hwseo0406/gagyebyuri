@@ -509,7 +509,7 @@ def id_check():
             cursor.execute(sql, (id,))
             
             user = cursor.fetchone()
-            if id and user[id]:
+            if user:
                 # 아이디 일치 -> 중복
                 return jsonify({'success': False, 'error': 'Invalid id'})
             else:
