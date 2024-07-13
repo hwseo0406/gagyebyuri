@@ -8,10 +8,12 @@ const ExpenseList = () => {
   const [editData, setEditData] = useState(null);
   const [expenses, setExpenses] = useState([]);
   const [nickname, setNickname] = useState('');
-
+  const [total, setTotal] = useState(null);
   useEffect(() => {
-    if (nickname) {
-      fetchExpenses(nickname);
+    const storedNickname = sessionStorage.getItem('id');
+    if (storedNickname) {
+      setNickname(storedNickname);
+      fetchExpenses(nickname)
     }
   }, [nickname]);
 
@@ -19,6 +21,8 @@ const ExpenseList = () => {
     try {
       const response = await axios.get(`http://localhost:5000/ExpenseList/${nickname}`);
       setExpenses(response.data.receipts);
+      setTotal(response.data.total);
+      console.log(response.data.total)
     } catch (error) {
       console.error('Error fetching expenses:', error);
     }
@@ -67,15 +71,8 @@ const ExpenseList = () => {
 
   return (
     <div>
-      {console.log(expenses)}
       <h1>지출 내역</h1>
-      <input
-        type="text"
-        placeholder="닉네임"
-        value={nickname}
-        onChange={handleNicknameChange}
-      />
-      <button onClick={() => fetchExpenses(nickname)}>조회</button>
+
       <button onClick={() => handleOpenModal()}>추가</button>
       <ExpenseModal
         isOpen={isModalOpen}
@@ -111,6 +108,7 @@ const ExpenseList = () => {
             ))}
           </tbody>
         </table>
+        <h3>총 합계: {total}원</h3>
       </div>
     </div>
   );
