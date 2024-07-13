@@ -21,23 +21,20 @@ function App() {
   const [name, setName] = useState('');
   const navigate = useNavigate();
 
+  const checkSession = () => {
+    const id = sessionStorage.getItem('id');
+    const name = sessionStorage.getItem('name');
+    if (id && name) {
+      setIsLoggedIn(true);
+      setName(name);
+    } else {
+      setIsLoggedIn(false);
+    }
+  };
+
   useEffect(() => {
-    fetch('http://localhost:5000/session', {
-      credentials: 'include',
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        if (data.is_logged_in) {
-          console.log('서버로부터 받은 데이터:', data);
-          setIsLoggedIn(true);
-          setName(data.name);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }, [isLoggedIn]);
+    checkSession();
+  }, []);
 
 
   const toggleDarkMode = () => {
@@ -46,8 +43,8 @@ function App() {
   };
 
   const handleLogin = (name) => {
-    setName(name);
     setIsLoggedIn(true);
+    setName(name);
   };
 
   const handleLogout = () => {
@@ -59,6 +56,7 @@ function App() {
         if (data.success) {
           setIsLoggedIn(false);
           setName('');
+          sessionStorage.clear();
         }
       })
       .catch(error => {
