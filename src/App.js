@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import LoginPage from './pages/LoginPage';
+import ForeignCurrency from './pages/ForeignCurrency'
 import './App.css'; // App 컴포넌트의 스타일링을 위한 CSS 파일을 import
 
 function App() {
@@ -91,6 +92,7 @@ function App() {
               <Route path="/expense/list" element={<ExpenseList />} />
               <Route path="/analysis/fees" element={<FeeManagement />} />
               <Route path="/income/list" element={<IncomeList />} />
+              <Route path="/ForeignCurrency" element={<ForeignCurrency />} />
               <Route path="/account/my-page" element={<MyPage />} />
               <Route path="/analysis/semester" element={<SemesterAnalysis />} />
               <Route path="/" element={<Home />} />

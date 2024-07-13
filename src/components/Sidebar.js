@@ -54,7 +54,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/expense/register">
+          <Link to="/ForeignCurrency">
             <i className="icon icon-expense fas fa-plane"></i>
             <span>외화 가계부</span>
           </Link>
