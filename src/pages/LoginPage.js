@@ -15,13 +15,14 @@ const LoginPage = ({ onLogin }) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ id, password })
+      body: JSON.stringify({ id, password }),
+      credentials: 'include'  // 세션 쿠키 포함
     })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          localStorage.setItem('id', data.id);
-          localStorage.setItem('name', data.name);
+          sessionStorage.setItem('id', data.id);
+          sessionStorage.setItem('name', data.name);
           onLogin(data.name);
           setError('');
           navigate('/');

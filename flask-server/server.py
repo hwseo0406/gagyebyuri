@@ -27,8 +27,6 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 app.secret_key = SECRET_KEY
 app.config['SESSION_KEY_PREFIX'] = 'gagye_byuri_'
-app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 bcrypt = Bcrypt(app)
 
 UPLOAD_FOLDER = 'uploads'
@@ -481,8 +479,6 @@ def login():
                 # 비밀번호 일치 -> 로그인 성공
                 session['id'] = user['id']
                 session['name'] = user['name']
-                session.permanent = True
-                print(session)
                 return jsonify({'success': True, 'id': user['id'], 'name': user['name']})
             else:
                 # 비밀번호 불일치 혹은 사용자가 존재하지 않음 -> 로그인 실패
@@ -497,19 +493,8 @@ def logout():
     if id:
         session.clear()
         return jsonify({'success': True})
-
-# 세션 확인
-@app.route('/session')
-def session_status():
-    print(session)
-    if 'id' in session:
-        return jsonify({'is_logged_in': True, 'id': session['id'], 'name': session['name']})
-    return jsonify({'is_logged_in': False})
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-# 아이디 중복 검사
+    
+    # 아이디 중복 검사
 @app.route('/idcheck', methods=['POST'])
 def login():
     data = request.get_json()
@@ -532,3 +517,6 @@ def login():
                 return jsonify({'success': True, 'id': id})
     finally:
         connection.close()
+
+if __name__ == '__main__':
+    app.run(debug=True)
