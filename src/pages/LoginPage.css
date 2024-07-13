@@ -1,24 +1,35 @@
+/* LoginPage.css */
+
 .login-page {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   background-color: #f9f9f9;
 }
 
-.login-page h2 {
+.login-content {
+  max-width: 300px;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-content h2 {
   font-size: 1.5rem;
   margin-bottom: 20px;
   text-align: center;
 }
 
-.login-page form {
+.login-content form {
   display: flex;
   flex-direction: column;
 }
 
-.login-page input {
+.login-content input {
   margin-bottom: 10px;
   padding: 10px;
   font-size: 1rem;
@@ -26,7 +37,7 @@
   border-radius: 5px;
 }
 
-.login-page button {
+.login-content button {
   padding: 10px;
   font-size: 1rem;
   background-color: #007bff;
@@ -34,28 +45,29 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.login-page button:hover {
+.login-content button:hover {
   background-color: #0056b3;
 }
 
-.login-page .error {
+.login-content .error {
   color: red;
   margin-top: 10px;
   text-align: center;
 }
 
-.login-page div {
+.login-content > div {
   margin-top: 10px;
   text-align: center;
 }
 
-.login-page a {
+.login-content a {
   color: #007bff;
   text-decoration: none;
 }
 
-.login-page a:hover {
+.login-content a:hover {
   text-decoration: underline;
 }

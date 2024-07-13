@@ -65,10 +65,6 @@ const ExpenseList = () => {
     }
   };
 
-  const handleNicknameChange = (e) => {
-    setNickname(e.target.value);
-  };
-
   return (
     <div>
       <h1>지출 내역</h1>

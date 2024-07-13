@@ -134,7 +134,7 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
                         value={item.quantity}
                         onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
                       />
-                    </td>
+                    </td> 
                     <td>
                       <input
                         type="number"

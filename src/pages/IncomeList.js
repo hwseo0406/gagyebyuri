@@ -63,10 +63,6 @@ const IncomeList = () => {
     }
   };
 
-  const handleNicknameChange = (e) => {
-    setNickname(e.target.value);
-  };
-
   return (
     <div>
       <h1>수입 내역</h1>
