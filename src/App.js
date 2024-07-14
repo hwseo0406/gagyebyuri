@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import LoginModal from './components/LoginModal';
 import './App.css'; // App 컴포넌트의 스타일링을 위한 CSS 파일을 import
+import ForeignCurrency from './pages/ForeignCurrency';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -92,7 +93,7 @@ function App() {
               <Route path="/account/my-page" element={<MyPage />} />
               <Route path="/analysis/semester" element={<SemesterAnalysis />} />
               <Route path="/" element={<Home />} />
-              <Route path="*" element={<NotFound />} />
+              <Route path="/expense/register" element={<ForeignCurrency />} />
             </Routes>
           </div>
         </div>
