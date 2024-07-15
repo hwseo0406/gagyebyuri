@@ -99,7 +99,7 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
     <div className="modal">
       {console.log(items)}
       <div className="modal-content">
-        <span className="close" onClick={onClose}>&times;</span>
+        <span className="closeModal" onClick={onClose}>&times;</span>
         <h2>영수증 업로드</h2>
         <form onSubmit={handleFormSubmit}>
           <input type="file" onChange={handleFileChange} />

@@ -55,7 +55,7 @@ const IncomeModal = ({ isOpen, onClose, onSubmit }) => {
   return (
     <div className="modal">
       <div className="modal-content">
-        <span className="close" onClick={onClose}>&times;</span>
+        <span className="closeModal" onClick={onClose}>&times;</span>
         <h2>수입 업로드</h2>
         <form onSubmit={handleFormSubmit}>
           <button type="button" onClick={handleAddItem}>항목 추가</button>
