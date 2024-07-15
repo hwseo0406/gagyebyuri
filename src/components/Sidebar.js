@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import './Sidebar.css';
 
 
-const Sidebar = () => {
+const Sidebar = ({ onLogout }) => {
   const [hovered, setHovered] = useState(false);
+  const [name, setName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleMouseEnter = () => {
     setHovered(true);
@@ -31,7 +33,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/income/list">
+          <Link to="/main/income/list">
             <i className="icon icon-income fas fa-plus-circle"></i>
             <span>수입 내역</span>
           </Link>
@@ -41,7 +43,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/expense/list">
+          <Link to="/main/expense/list">
             <i className="icon icon-expense fas fa-minus-circle"></i>
             <span>지출 내역</span>
           </Link>
@@ -54,7 +56,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/ForeignCurrency">
+          <Link to="/main/ForeignCurrency">
             <i className="icon icon-expense fas fa-plane"></i>
             <span>외화 가계부</span>
           </Link>
@@ -67,7 +69,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/analysis/income-expense">
+          <Link to="/main/analysis/income-expense">
             <i className="icon icon-analysis fas fa-chart-pie"></i>
             <span>수입/지출 분석</span>
           </Link>
@@ -77,7 +79,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/analysis/semester">
+          <Link to="/main/analysis/semester">
             <i className="fas fa-calendar-alt"></i>
             <span>월별 분석</span>
           </Link>
@@ -90,7 +92,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/analysis/fees">
+          <Link to="/main/analysis/fees">
           <i className="icon icon-management fas fa-users"></i>
             <span>회비 관리</span>
           </Link>
@@ -113,7 +115,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/account/my-page">
+          <Link to="/main/account/my-page">
             <i className="icon icon-account fas fa-user-circle"></i>
             <span>마이 페이지</span>
           </Link>
@@ -123,7 +125,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/account/customer-service">
+          <Link to="/main/account/customer-service">
             <i className="icon icon-account fas fa-headset"></i>
             <span>고객센터</span>
           </Link>
@@ -133,7 +135,7 @@ const Sidebar = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <Link to="/account/logout">
+           <Link to="/" onClick={onLogout}>
             <i className="icon icon-account fas fa-sign-out-alt"></i>
             <span>로그아웃</span>
           </Link>

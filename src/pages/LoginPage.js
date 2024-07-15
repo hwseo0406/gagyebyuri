@@ -23,9 +23,9 @@ const LoginPage = ({ onLogin }) => {
         if (data.success) {
           sessionStorage.setItem('id', data.id);
           sessionStorage.setItem('name', data.name);
-          onLogin(data.name);
           setError('');
-          navigate('/');
+          onLogin();
+          navigate('/main');
         } else {
           setError('Invalid id or password');
         }

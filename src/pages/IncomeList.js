@@ -27,7 +27,6 @@ const IncomeList = () => {
   };
 
   const handleOpenModal = (data = null) => {
-    setEditMode(!!data);
     setEditData(data);
     setIsModalOpen(true);
   };
@@ -39,14 +38,10 @@ const IncomeList = () => {
 
   const handleModalSubmit = async (data) => {
     try {
-      if (editMode) {
-        await axios.put(`http://localhost:5000/update_income/${editData.id}`, data);
-      } else {
-        await axios.post('http://localhost:5000/incomesave', {
+      await axios.post('http://localhost:5000/incomesave', {
           nickname: nickname,
           gptResult_income: data
         });
-      }
       setIsModalOpen(false);
       fetchIncomes(nickname); // 새 데이터 저장 후 수입 내역 갱신
     } catch (error) {
@@ -78,9 +73,9 @@ const IncomeList = () => {
         <table>
           <thead>
             <tr>
-              <th>송신자 이름</th>
+              <th>수입 출처</th>
               <th>금액</th>
-              <th>수정</th>
+              <th>날짜</th>
               <th>삭제</th>
             </tr>
           </thead>
@@ -89,9 +84,7 @@ const IncomeList = () => {
               <tr key={index}>
                 <td>{income.sender_name}</td>
                 <td>{income.amount}원</td>
-                <td>
-                  <button onClick={() => handleOpenModal(income)}>수정</button>
-                </td>
+                <td>{formatDate(income.sender_date)}</td>
                 <td>
                   <button onClick={() => handleDelete(income.id)}>삭제</button>
                 </td>
@@ -105,3 +98,7 @@ const IncomeList = () => {
 };
 
 export default IncomeList;
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return isNaN(date) ? 'Invalid date' : date.toISOString().split('T')[0];
+};

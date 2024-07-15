@@ -137,21 +137,13 @@ def save_data_income():
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
-        # 가계부 데이터 저장
-        sql = """
-        INSERT INTO account (nickname, owner_name, account_balance)
-        VALUES (%s, %s, %s)
-        """
-        cursor.execute(sql, (nickname, gpt_result['owner_name'], gpt_result['account_balance']))
-        account_id = cursor.lastrowid
-        
         # 항목 데이터 저장
         for income in gpt_result['income']:
             sql = """
-            INSERT INTO income (account_id, sender_name, amount)
-            VALUES (%s, %s, %s)
+            INSERT INTO income (nickname, sender_name, amount, sender_date)
+            VALUES (%s, %s, %s, %s)
             """
-            cursor.execute(sql, (account_id, income['sender_name'], income['amount'] ))
+            cursor.execute(sql, (nickname, income['sender_name'], income['amount'], income['sender_date'] ))
         
     connection.commit()
     connection.close()
@@ -189,36 +181,15 @@ def get_income_list(nickname):
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = '''
-        select i.id, i.sender_name, i.amount
-        from income i join account a 
-        on i.account_id = a.id 
-        where a.nickname = %s
+        select i.id, i.sender_name, i.amount, i.sender_date
+        from income i
+        where i.nickname = %s
         '''
         cursor.execute(sql, (nickname,))
         account = cursor.fetchall()
     
     connection.close()
     return jsonify(account)
-
-# 수입 업데이트
-@app.route('/update_income/<int:id>', methods=['PUT'])
-def update_income(id):
-    data = request.json
-    sender_name = data.get('sender_name')
-    amount = data.get('amount')
-
-    connection = get_db_connection()
-    with connection.cursor() as cursor:
-        sql = """
-        UPDATE income
-        SET sender_name = %s, amount = %s
-        WHERE id = %s
-        """
-        cursor.execute(sql, (sender_name, amount, id))
-    
-    connection.commit()
-    connection.close()
-    return jsonify({'message': '수입 내역 수정 성공'})
 
 # 수익 삭제
 @app.route('/delete_income/<int:id>', methods=['DELETE'])
