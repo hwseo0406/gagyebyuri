@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ExpenseModal from './ExpenseModal';
+import './ExpenseList.css';
 
 const ExpenseList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,8 +69,11 @@ const ExpenseList = () => {
   return (
     <div>
       <h1>지출 내역</h1>
-
-      <button onClick={() => handleOpenModal()}>추가</button>
+      <div className="table-container">
+        
+      <button onClick={() => handleOpenModal()} className="add-button">
+        내역추가
+      </button>
       <ExpenseModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -77,7 +81,6 @@ const ExpenseList = () => {
         editData={editData}
       />
 
-      <div className="table-container">
         <table>
           <thead>
             <tr>
@@ -104,7 +107,7 @@ const ExpenseList = () => {
             ))}
           </tbody>
         </table>
-        <h3>총 합계: {total}원</h3>
+        <h3 style={{ textAlign: 'right' }}>총 합계: {total}원</h3>
       </div>
     </div>
   );

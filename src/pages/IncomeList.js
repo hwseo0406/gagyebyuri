@@ -61,7 +61,8 @@ const IncomeList = () => {
   return (
     <div>
       <h1>수입 내역</h1>
-      <button onClick={() => handleOpenModal()}>추가</button>
+      <div className="table-container">
+      <button onClick={() => handleOpenModal()} className="add-button">내역 추가</button>
       <IncomeModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -69,7 +70,6 @@ const IncomeList = () => {
         editData={editData}
       />
 
-      <div className="table-container">
         <table>
           <thead>
             <tr>
