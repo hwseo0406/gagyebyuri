@@ -54,6 +54,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+//수입/지출 분석
 app.get('/api/item', async (req, res) => {
     try {
         const query = 'SELECT item_name, amount FROM items';
@@ -88,6 +89,7 @@ app.get('/api/item', async (req, res) => {
     }
 });
 
+//월별 분석
 app.get('/api/semesteranalysis', async (req, res) => {
     try {
         const query = 'SELECT item_name, amount, item_date FROM items';
