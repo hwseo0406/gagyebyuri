@@ -489,5 +489,59 @@ def id_check():
     finally:
         connection.close()
 
+# 비밀번호 확인
+@app.route('/verify-password', methods=['POST'])
+def verify_password():
+    data = request.json
+    user_id = data.get('id')
+    password = data.get('password')
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM users WHERE id=%s"
+            cursor.execute(sql, (user_id,))
+            user = cursor.fetchone()
+            if user and bcrypt.check_password_hash(user['password'], password):
+                return jsonify(success=True)
+            else:
+                return jsonify(success=False)
+    finally:
+        connection.close()
+
+# 이름 변경
+@app.route('/update-name', methods=['POST'])
+def update_name():
+    data = request.json
+    user_id = data.get('id')
+    new_name = data.get('name')
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "UPDATE users SET name=%s WHERE id=%s"
+            cursor.execute(sql, (new_name, user_id))
+            connection.commit()
+            return jsonify(success=True)
+    finally:
+        connection.close()
+        
+# 계정 삭제
+@app.route('/delete-account', methods=['DELETE'])
+def delete_account():
+    data = request.json
+    id = data.get('id')
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "DELETE FROM users WHERE id=%s"
+            cursor.execute(sql, (id,))
+        connection.commit()
+        session.clear()
+        return jsonify({'success': True})
+    finally:
+        connection.close()
+        
 if __name__ == '__main__':
     app.run(debug=True)
