@@ -17,9 +17,9 @@ const ExpenseList = () => {
     const storedNickname = sessionStorage.getItem('id');
     if (storedNickname) {
       setNickname(storedNickname);
-      fetchExpenses(nickname);
+      fetchExpenses(storedNickname); // 수정: nickname 대신 storedNickname 사용
     }
-  }, [nickname]);
+  }, []);
 
   const fetchExpenses = async (nickname) => {
     try {
@@ -51,6 +51,7 @@ const ExpenseList = () => {
         await axios.post('http://localhost:5000/save', {
           nickname: nickname,
           gptResult: data,
+          category: data.category, // 카테고리 값 추가
         });
       }
       setIsModalOpen(false);
@@ -72,16 +73,24 @@ const ExpenseList = () => {
   return (
     <div className="expense-list">
       <h1>지출 내역</h1>
+      <div className="table-container">
         <button onClick={() => handleOpenModal()} className="add-button">
-          내역 추가
+          내역추가
         </button>
-        <ExpenseModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleModalSubmit} editData={editData} />
+        <ExpenseModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleModalSubmit}
+          editData={editData}
+        />
+
         <table>
           <thead>
             <tr>
               <th>가게 이름</th>
               <th>구매 날짜</th>
               <th>총 가격</th>
+              <th>카테고리</th>
               <th>수정</th>
               <th>삭제</th>
             </tr>
@@ -92,6 +101,7 @@ const ExpenseList = () => {
                 <td>{expense.store_name}</td>
                 <td>{formatDate(expense.purchase_date)}</td>
                 <td>{expense.total_cost}원</td>
+                <td>{expense.category}</td> {/* 카테고리 값 표시 */}
                 <td>
                   <button onClick={() => handleOpenModal(expense)}>수정</button>
                 </td>

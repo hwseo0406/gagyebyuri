@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+from datetime import datetime
+# 날짜 변환
 import pymysql
 import requests
 import uuid
@@ -9,7 +11,7 @@ import json
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from datetime import timedelta
+from datetime import date, datetime
 
 #환경변수
 load_dotenv() 
@@ -107,26 +109,37 @@ def save_data():
     nickname = data.get('nickname')
     gpt_result = data.get('gptResult')
 
+    store_name = gpt_result.get('store_name')
+    purchase_date = gpt_result.get('purchase_date')
+    total_cost = gpt_result.get('total_cost')
+    category = gpt_result.get('category')  # 카테고리 값 가져오기
+
+    # 날짜 형식 변환
+    formatted_date = format_date(purchase_date)
+
     connection = get_db_connection()
     with connection.cursor() as cursor:
-        # 가계부 데이터 저장
         sql = """
-        INSERT INTO receipts (nickname, store_name, purchase_date, total_cost)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO receipts (nickname, store_name, purchase_date, total_cost, category)
+        VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(sql, (nickname, gpt_result['store_name'], gpt_result['purchase_date'], gpt_result['total_cost']))
+        cursor.execute(sql, (nickname, store_name, formatted_date, total_cost, category))
         receipt_id = cursor.lastrowid
-        
-        # 항목 데이터 저장
-        for item in gpt_result['items']:
+
+        items = gpt_result.get('items', [])
+        for item in items:
+            item_name = item.get('item_name')
+            quantity = item.get('quantity')
+            amount = item.get('amount')
             sql = """
             INSERT INTO items (receipt_id, item_name, quantity, amount)
             VALUES (%s, %s, %s, %s)
             """
-            cursor.execute(sql, (receipt_id, item['item_name'], item['quantity'], item['amount']))
-        
+            cursor.execute(sql, (receipt_id, item_name, quantity, amount))
+
     connection.commit()
     connection.close()
+
     return jsonify({'message': '데이터 저장 성공'})
 
 @app.route('/incomesave', methods=['POST'])
@@ -149,13 +162,14 @@ def save_data_income():
     connection.close()
     return jsonify({'message': '데이터 저장 성공'})
 
+
 # 지출내역 보여주기
 @app.route('/ExpenseList/<nickname>', methods=['GET'])
 def get_receipts(nickname):
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = """
-        SELECT r.id, r.store_name, r.purchase_date, r.total_cost
+        SELECT r.id, r.store_name, r.purchase_date, r.total_cost, r.category
         FROM receipts r
         WHERE r.nickname = %s
         """
@@ -173,6 +187,8 @@ def get_receipts(nickname):
         
     connection.close()
     return jsonify({"receipts": receipts,  "total": total["total"]})
+
+
 
 # 수익 내역 보여주기
 @app.route('/income_list/<nickname>', methods = ['GET'])
@@ -203,6 +219,13 @@ def delete_income(id):
     connection.close()
     return jsonify({'message': '수입 내역 삭제 성공'})
 
+def format_date(date_string):
+    try:
+        date_obj = datetime.strptime(date_string, '%a, %d %b %Y %H:%M:%S GMT')
+        return date_obj.strftime('%Y-%m-%d')
+    except ValueError:
+        return date_string  # 이미 올바른 형식일 경우 그대로 반환
+
 # 영수증 수정
 @app.route('/update_receipt/<int:id>', methods=['PUT'])
 def update_receipt(id):
@@ -210,35 +233,22 @@ def update_receipt(id):
     store_name = data.get('store_name')
     purchase_date = data.get('purchase_date')
     total_cost = data.get('total_cost')
-    items = data.get('items', [])
+    category = data.get('category')  # 추가된 카테고리
+
+    formatted_date = format_date(purchase_date)
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = """
         UPDATE receipts
-        SET store_name = %s, purchase_date = %s, total_cost = %s
+        SET store_name = %s, purchase_date = %s, total_cost = %s, category = %s
         WHERE id = %s
         """
-        cursor.execute(sql, (store_name, purchase_date, total_cost, id))
-
-        for item in items:
-            if 'id' in item:
-                sql = """
-                UPDATE items
-                SET item_name = %s, quantity = %s, amount = %s
-                WHERE id = %s
-                """
-                cursor.execute(sql, (item['item_name'], item['quantity'], item['amount'], item['id']))
-            else:
-                sql = """
-                INSERT INTO items (receipt_id, item_name, quantity, amount)
-                VALUES (%s, %s, %s, %s)
-                """
-                cursor.execute(sql, (id, item['item_name'], item['quantity'], item['amount']))
-
-    connection.commit()
+        cursor.execute(sql, (store_name, formatted_date, total_cost, category, id))
+        connection.commit()
     connection.close()
-    return jsonify({'message': '지출 내역 수정 성공'})
+
+    return jsonify({'message': '영수증 업데이트 성공'})
 
 # 영수증 삭제
 @app.route('/delete_receipt/<int:id>', methods=['DELETE'])
@@ -374,29 +384,85 @@ def gptapi(infer_text):
     return data
 
 # GPT API 호출
-def gptapi_income(infer_text):
-    timestamp = int(time.time())
-    if use_test_data:
-        with open('gpt_json_income.json', 'r', encoding='utf-8') as f:
-            message = json.load(f)
-    else:
-        client = OpenAI(api_key = GPT_API_KEY)
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            response_format={"type": "json_object"},
-            messages = [
-                {"role": "system", "content": "You are a helpful assistant to analyze the owner_name, income (sender_name, amount also amount is number) and account balance from the account and output it in JSON format"},
-                {"role": "user", "content": f'Please analyze the {infer_text}. Only include owner_name, income [] and account balance'},
-            ]
-        )
-        message = response.choices[0].message.content
+# def gptapi_income(infer_text):
+#     timestamp = int(time.time())
+#     if use_test_data:
+#         with open('gpt_json_income.json', 'r', encoding='utf-8') as f:
+#             message = json.load(f)
+#     else:
+#         client = OpenAI(api_key = GPT_API_KEY)
+#         response = client.chat.completions.create(
+#             model="gpt-3.5-turbo",
+#             response_format={"type": "json_object"},
+#             messages = [
+#                 {"role": "system", "content": "You are a helpful assistant to analyze the owner_name, income (sender_name, amount also amount is number) and account balance from the account and output it in JSON format"},
+#                 {"role": "user", "content": f'Please analyze the {infer_text}. Only include owner_name, income [] and account balance'},
+#             ]
+#         )
+#         message = response.choices[0].message.content
 
-    data = json.loads(message)
-    gpt_file_path = os.path.join(UPLOAD_FOLDER, f'gpt_json_income{timestamp}.json')
-    with open(gpt_file_path, 'w', encoding='utf-8') as f:
-        json.dump(message, f, ensure_ascii = False, indent = 4)
+#     data = json.loads(message)
+#     gpt_file_path = os.path.join(UPLOAD_FOLDER, f'gpt_json_income{timestamp}.json')
+#     with open(gpt_file_path, 'w', encoding='utf-8') as f:
+#         json.dump(message, f, ensure_ascii = False, indent = 4)
 
-    return data
+#     return data
+
+def fetch_income_expense_data(nickname):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM receipts WHERE nickname = %s", (nickname,))
+            expenses = cursor.fetchall()
+            cursor.execute("SELECT * FROM income WHERE nickname = %s", (nickname,))
+            incomes = cursor.fetchall()
+    finally:
+        connection.close()
+
+    # Convert date objects to strings
+    for record in expenses:
+        if isinstance(record.get('purchase_date'), (date, datetime)):
+            record['purchase_date'] = record['purchase_date'].isoformat()
+
+    for record in incomes:
+        if isinstance(record.get('sender_date'), (date, datetime)):
+            record['sender_date'] = record['sender_date'].isoformat()
+
+    return expenses, incomes
+
+#gpt api
+def analyze_gptapi(incomes, expenses):
+    client = OpenAI(api_key = GPT_API_KEY)
+    data = {
+        "incomes": incomes,
+        "expenses": expenses
+    }
+    analysis_request = """
+    Comparison of total expenses and total income.
+    Assessment of balance between income and expenses.
+    Monthly analysis of income and expenses.
+    """
+    analysis_request += json.dumps(data)
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant to analyze the expenditure and income data. Please respond in Korean."},
+            {"role": "user", "content": analysis_request}
+        ]
+    )
+    message = response.choices[0].message.content
+    return message
+
+@app.route('/analyze', methods=['POST'])
+def analyze_income_expense():
+    nickname = request.json.get('nickname')
+    if not nickname:
+        return jsonify({'error': 'No nickname provided'}), 400
+
+    expenses, incomes = fetch_income_expense_data(nickname)
+    analysis_result = analyze_gptapi(incomes, expenses)
+    return jsonify({'analysisResult': analysis_result})
 
 #로그인 기능
 
@@ -489,5 +555,59 @@ def id_check():
     finally:
         connection.close()
 
+# 비밀번호 확인
+@app.route('/verify-password', methods=['POST'])
+def verify_password():
+    data = request.json
+    user_id = data.get('id')
+    password = data.get('password')
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM users WHERE id=%s"
+            cursor.execute(sql, (user_id,))
+            user = cursor.fetchone()
+            if user and bcrypt.check_password_hash(user['password'], password):
+                return jsonify(success=True)
+            else:
+                return jsonify(success=False)
+    finally:
+        connection.close()
+
+# 이름 변경
+@app.route('/update-name', methods=['POST'])
+def update_name():
+    data = request.json
+    user_id = data.get('id')
+    new_name = data.get('name')
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "UPDATE users SET name=%s WHERE id=%s"
+            cursor.execute(sql, (new_name, user_id))
+            connection.commit()
+            return jsonify(success=True)
+    finally:
+        connection.close()
+        
+# 계정 삭제
+@app.route('/delete-account', methods=['DELETE'])
+def delete_account():
+    data = request.json
+    id = data.get('id')
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "DELETE FROM users WHERE id=%s"
+            cursor.execute(sql, (id,))
+        connection.commit()
+        session.clear()
+        return jsonify({'success': True})
+    finally:
+        connection.close()
+        
 if __name__ == '__main__':
     app.run(debug=True)

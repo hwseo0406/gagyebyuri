@@ -118,3 +118,17 @@
   float: none;
   width: 90px; /* 버튼의 너비 조정 */
 }
+.checkbox-container {
+  display: flex;
+  justify-content: space-around; /* 항목들 사이의 간격을 조정 */
+  gap: 10px; /* 항목들 사이의 간격 */
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center; /* 세로 가운데 정렬 */
+}
+
+.checkbox-item input[type="checkbox"] {
+  margin-right: 5px; /* 체크박스와 레이블 사이의 간격 */
+}

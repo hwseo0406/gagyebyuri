@@ -1,0 +1,67 @@
+.mypage-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mypage-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .verification-section,
+  .update-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .verification-section input,
+  .update-section input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .verification-section button,
+  .update-section button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  
+  .update-section .delete-button {
+    background-color: #FF0000; /* Red background for delete button */
+    font-weight: bold; /* Bold text for delete button */
+    margin-top: 20px; /* Add margin top to separate from the name change button */
+  }
+  
+  .verification-section button:hover,
+  .update-section button:hover {
+    background-color: #45a049;
+  }
+  
+  .error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .message {
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
