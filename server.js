@@ -40,85 +40,12 @@ app.get('/api/check-db-connection', (req, res) => {
     });
 });
 
-//수입/지출 분석
+// 수입/지출 분석
 app.get('/api/item', async (req, res) => {
     try {
-        const query = 'SELECT item_name, amount FROM items';
-        const accountquery = 'SELECT sender_name, amount FROM income';
-        
-        // Promise를 사용하여 두 개의 쿼리를 병렬로 실행
-        const [itemsResults, accountsResults] = await Promise.all([
-            new Promise((resolve, reject) => {
-                db.query(query, (err, results) => {
-                    if (err) return reject(err);
-                    resolve(results);
-                });
-            }),
-            new Promise((resolve, reject) => {
-                db.query(accountquery, (err, results) => {
-                    if (err) return reject(err);
-                    resolve(results);
-                });
-            })
-        ]);
+        const query = 'SELECT category AS name, total_cost AS amount FROM receipts';
+        const accountQuery = 'SELECT sender_name AS name, amount FROM income';
 
-        // 응답 데이터 구조 생성
-        const responseData = {
-            items: itemsResults,
-            accounts: accountsResults
-        };
-
-        res.send(responseData);
-    } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).send('Internal server error');
-    }
-});
-
-<<<<<<< HEAD
-//수입/지출 분석
-app.get('/api/item', async (req, res) => {
-    try {
-        const query = 'SELECT item_name, amount FROM items';
-        const accountquery = 'SELECT sender_name, amount FROM income';
-        
-        // Promise를 사용하여 두 개의 쿼리를 병렬로 실행
-        const [itemsResults, accountsResults] = await Promise.all([
-            new Promise((resolve, reject) => {
-                db.query(query, (err, results) => {
-                    if (err) return reject(err);
-                    resolve(results);
-                });
-            }),
-            new Promise((resolve, reject) => {
-                db.query(accountquery, (err, results) => {
-                    if (err) return reject(err);
-                    resolve(results);
-                });
-            })
-        ]);
-
-        // 응답 데이터 구조 생성
-        const responseData = {
-            items: itemsResults,
-            accounts: accountsResults
-        };
-
-        res.send(responseData);
-    } catch (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).send('Internal server error');
-    }
-});
-
-=======
->>>>>>> b2aa420c9d9fd8e43c54bc52f00d352721c6f1f9
-//월별 분석
-app.get('/api/semesteranalysis', async (req, res) => {
-    try {
-        const query = 'SELECT item_name, amount, item_date FROM items';
-        const accountQuery = 'SELECT sender_name, amount, sender_date FROM income';
-        
         // Promise를 사용하여 두 개의 쿼리를 병렬로 실행
         const [itemsResults, accountsResults] = await Promise.all([
             new Promise((resolve, reject) => {
@@ -139,6 +66,64 @@ app.get('/api/semesteranalysis', async (req, res) => {
         const responseData = {
             items: itemsResults,
             accounts: accountsResults
+        };
+
+        res.send(responseData);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send('Internal server error');
+    }
+});
+
+// 영수증 데이터 조회 API 엔드포인트
+app.get('/api/receipts', (req, res) => {
+    const query = 'SELECT category AS name, SUM(total_cost) AS amount FROM receipts GROUP BY category';
+  
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        res.status(500).send('Internal server error');
+      } else {
+        res.send(results);
+      }
+    });
+  });
+
+
+// 월별 분석
+app.get('/api/semesteranalysis', async (req, res) => {
+    try {
+        const itemQuery = 'SELECT item_name AS name, amount, item_date AS date FROM items';
+        const incomeQuery = 'SELECT sender_name AS name, amount, sender_date AS date FROM income';
+        const receiptsQuery = 'SELECT category AS name, total_cost AS amount, purchase_date AS date FROM receipts';
+
+        // Promise를 사용하여 세 개의 쿼리를 병렬로 실행
+        const [itemsResults, accountsResults, receiptsResults] = await Promise.all([
+            new Promise((resolve, reject) => {
+                db.query(itemQuery, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(incomeQuery, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(receiptsQuery, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            })
+        ]);
+
+        // 응답 데이터 구조 생성
+        const responseData = {
+            items: itemsResults,
+            accounts: accountsResults,
+            receipts: receiptsResults
         };
 
         res.send(responseData);
