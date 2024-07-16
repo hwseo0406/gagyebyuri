@@ -167,8 +167,8 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
                   ))}
                 </tbody>
               </table>
-              <br></br>
             </div>
+            <br></br>
             <button type="submit">저장</button>
           </form>
         </div>

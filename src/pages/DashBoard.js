@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './DashBoard.css'; // CSS 파일 추가
 
-const DashBoard = () => {
+const DashBoard = ({name}) => {
   const [nickname, setNickname] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
@@ -32,7 +32,7 @@ const DashBoard = () => {
       <h1 className="dashboard-title">대쉬보드</h1>
       <div className="dashboard-content">
         <button className="analyze-button" onClick={fetchAnalysis}>
-          분석하기
+          {name} 분석하기
         </button>
         {error && <p className="error-message">{error}</p>}
         {analysisResult ? (

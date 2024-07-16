@@ -49,14 +49,15 @@ const IncomeModal = ({ isOpen, onClose, onSubmit, editData }) => {
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <span className="closeModal" onClick={onClose}>&times;</span>
+    <div className="inmodal">
+      <div className="inmodal-content">
+        <span className="incloseModal" onClick={onClose}>&times;</span>
         <h2>수입 업로드</h2>
+        <hr />
         <form onSubmit={handleFormSubmit}>
+        <div className="inmodal-container">
           <button type="button" onClick={handleAddItem}>항목 추가</button>
-          <div className="table-container">
-            <table>
+            <table className="inmodal-table">
               <thead>
                 <tr>
                   <th>수입 출처</th>
@@ -97,6 +98,7 @@ const IncomeModal = ({ isOpen, onClose, onSubmit, editData }) => {
               </tbody>
             </table>
           </div>
+          <br></br>
           <button type="submit">저장</button>
         </form>
       </div>
