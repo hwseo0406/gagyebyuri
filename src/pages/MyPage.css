@@ -1,12 +1,12 @@
 .mypage-container {
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
+    max-width: 400px;
+    margin:  200px auto;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   }
   
   .mypage-container h1 {
@@ -35,10 +35,11 @@
     width: 100%;
     padding: 10px;
     border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
+    border-radius: 10px;
+    background-color: #007bff;
     color: white;
     cursor: pointer;
+    margin-top: 10px;
     margin-bottom: 10px;
   }
   
@@ -50,7 +51,7 @@
   
   .verification-section button:hover,
   .update-section button:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
   }
   
   .error {
@@ -64,4 +65,31 @@
     text-align: center;
     margin-top: 10px;
   }
+
+  /* 다크모드 */
   
+  .dark-mode .mypage-container{
+    background-color: #333333;
+    border: 1px solid #929292;
+    box-shadow: 0 2px 4px rgba(250, 250, 250, 0.1); 
+  }
+
+    
+  .dark-mode .verification-section button,
+  .dark-mode .update-section button {
+    background-color: rgba(36, 111, 240, 0.692);
+  }
+
+   
+  .dark-mode .verification-section button:hover,
+  .dark-mode .update-section button:hover {
+    background-color: rgba(36, 111, 240, 0.871);
+  }
+
+  .dark-mode .update-section .delete-button {
+    background-color: #ff0000a8;
+  }
+
+  .dark-mode .update-section .delete-button:hover {
+    background-color: #ff0000d7;
+  }

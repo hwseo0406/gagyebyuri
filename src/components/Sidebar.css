@@ -2,13 +2,17 @@
 .sidebar {
     width: 60px;
     height: 100vh; /* 사이드바 높이를 창 높이에 맞추기 */
-    background-color: #343a40;
+    background-color: #1e3a5f;
     position: fixed;
     transition: width 0.3s;
     overflow-y: auto; /* 세로 스크롤 활성화 */
     overflow-x: hidden; /* 가로 스크롤 숨기기 */
     z-index: 1000; /* 사이드바를 다른 요소들 위에 렌더링 */
 }
+
+.sidebar::-webkit-scrollbar {
+    display: none;
+  }
 
 .sidebar:hover {
     width: 200px;
@@ -34,7 +38,7 @@
 }
 
 .sidebar:hover .logo-image {
-    margin-left: 15px;
+    margin-left: 17px;
     transform: scale(1.5); /* 호버 시 이미지 확대 */
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* 흰색 그림자 추가하여 빛나는 효과 생성 */
 }
@@ -95,11 +99,11 @@
 
 /* Change background color on hover */
 .sidebar-item:hover {
-    background-color: #495057; /* 마우스 호버 시 배경색 변경 */
+    background-color: #2e4b66; /* 마우스 호버 시 배경색 변경 */
 }
 
 .sidebar-item:hover i {
-    color: #ffc107; /* 아이콘 색상 변경 */
+    color: #ff5722; /* 아이콘 색상 변경 */
 }
 
 .sidebar-item-header {
@@ -129,7 +133,35 @@
     display: flex;
     justify-content: center; /* 아이콘을 가운데 정렬 */
     align-items: center; /* 아이콘을 가운데 정렬 */
+    color: #ffb84d;
 }
 
-/* Font Awesome Icons */
+/*다크모드*/
+
+.dark-mode .sidebar {
+    background-color: #343a40; /* 더 어두운 배경색 */
+}
+
+.dark-mode .sidebar-item:hover {
+    background-color: #495057; /* 호버 시 배경색 */
+}
+
+.dark-mode .sidebar-item:hover i {
+    color: #191970; /* 호버 시 아이콘 색상 변경 */
+}
+
+.dark-mode .sidebar-logo span,
+.dark-mode .sidebar-item a,
+.dark-mode .sidebar-item-header span {
+    color: #DEDEDE; /* 다크 모드 텍스트 색상 */
+}
+
+.dark-mode .sidebar:hover .logo-image {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.481); /* 다크 모드에서 흰색 그림자 */
+}
+
+.dark-mode .sidebar-item i {
+    color: #adb5bd; /* 다크 모드 아이콘 기본 색상 */
+}
+
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');

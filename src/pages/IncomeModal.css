@@ -109,4 +109,69 @@
   width: 90px; /* 버튼의 너비 조정 */
 }
 
+/* 다크모드 */
 
+.dark-mode .inmodal {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .inmodal-content {
+  background-color: #2b2b2b;
+  color: #DEDEDE;
+  border: 1px solid #DEDEDE;
+}
+
+.dark-mode .inmodal-content input {
+  background-color: #757575;
+  color: #DEDEDE;
+  border: 1px solid #666;
+}
+
+.dark-mode .incloseModal {
+  color: #DEDEDE;
+}
+
+.dark-mode .incloseModal:hover,
+.dark-mode .incloseModal:focus {
+  color: #555;
+}
+
+.dark-mode .inmodal-content h2,
+.dark-mode .inmodal-content h4 {
+  color: #DEDEDE;
+}
+
+.dark-mode .inmodal-container {
+  background-color: #2b2b2b;
+}
+
+.dark-mode .inmodal-container button,
+.dark-mode .inmodal button {
+  background-color: rgba(36, 111, 240, 0.692);
+  color: #DEDEDE;
+}
+
+.dark-mode .inmodal-container button:hover,
+.dark-mode .inmodal button:hover {
+  background-color: rgba(36, 111, 240, 0.871);
+}
+
+.dark-mode .inmodal-table {
+  background-color: #444;
+  color: #DEDEDE;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .inmodal-table th {
+  border: 1px solid #989898;
+}
+
+.dark-mode .inmodal-table td {
+  border: 1px solid #989898;
+}
+
+.dark-mode .inmodal-table input {
+  background-color: #757575;
+  color: #DEDEDE;
+  border: 1px solid #666;
+}

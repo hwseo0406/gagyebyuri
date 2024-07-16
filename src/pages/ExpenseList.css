@@ -57,3 +57,41 @@
 .expense-list table button:hover {
   background-color: #0056b3;
 }
+
+/* 다크모드 */
+
+.dark-mode .expense-list table {
+  background-color: #333;
+  color: #DEDEDE;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .expense-list table th {
+  background-color: rgba(36, 111, 240, 0.692);
+  color: #DEDEDE;
+}
+
+.dark-mode .expense-list table tbody tr:nth-child(even) {
+  background-color: #444;
+}
+
+.dark-mode .expense-list table tbody tr:hover {
+  background-color: #555;
+}
+
+.dark-mode .expense-list table button {
+  background-color: rgba(36, 111, 240, 0.692);
+  color: #fff;
+}
+
+.dark-mode .expense-list table button:hover {
+  background-color: rgba(36, 111, 240, 0.871);
+}
+
+.dark-mode .expense-list button.add-button {
+  background-color: rgba(36, 111, 240, 0.692);
+}
+
+.dark-mode .expense-list button.add-button:hover {
+  background-color: rgba(36, 111, 240, 0.871);
+}

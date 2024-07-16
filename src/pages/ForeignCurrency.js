@@ -76,7 +76,6 @@ function ForeignCurrency() {
   return (
     <div className="foreign-currency-page">
       <h1>외화 가계부</h1>
-
       <div>
         <h2>실시간 환율 정보 (기준: KRW 1원)</h2>
         {Object.keys(exchangeRates).length > 0 ? (
