@@ -1,71 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Analysis from './pages/Analysis';
-import CustomerService from './pages/CustomerService';
-import Excel from './pages/Excel';
-import ExpenseList from './pages/ExpenseList';
-import FeeManagement from './pages/FeeManagement';
-import IncomeList from './pages/IncomeList';
-import MyPage from './pages/MyPage';
-import SemesterAnalysis from './pages/SemesterAnalysis';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Main from './pages/Mainpage';
+import LoginPage from './pages/LoginPage';
+import Register from './pages/Register';
 import Home from './pages/Home';
-import NotFound from './pages/NotFound';
-import LoginModal from './components/LoginModal';
-import './App.css'; // App 컴포넌트의 스타일링을 위한 CSS 파일을 import
-import ForeignCurrency from './pages/ForeignCurrency';
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  const [isSessionChecked, setIsSessionChecked] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/session', {
-      credentials: 'include',
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.is_logged_in) {
-          setIsLoggedIn(true);
-          setUsername(data.username);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+    const checkSession = () => {
+      const id = sessionStorage.getItem('id');
+      const name = sessionStorage.getItem('name');
+      if (id && name) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setIsSessionChecked(true);
+    };
+
+    checkSession(); // 페이지가 처음 렌더링될 때 세션 체크
+
+    // 세션 확인이 완료되면 더 이상 체크하지 않음
+    return () => {
+      setIsSessionChecked(false);
+    };
   }, []);
 
-
-  const toggleDarkMode = () => {
-    setDarkMode(prevMode => !prevMode);
-    document.body.classList.toggle('dark-mode', !darkMode);
-  };
-
-   const handleLogin = (username) => {
-    setUsername(username);
-    setIsLoggedIn(true);
-    setIsModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    fetch('http://localhost:5000/logout', {
-      credentials: 'include',
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          setIsLoggedIn(false);
-          setUsername('');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  };
-
+  // 세션 확인이 완료되기 전까지 로딩 중 화면 표시
+  if (!isSessionChecked) {
+    return <div>Loading...</div>; 
+  }
+  
   return (
+<<<<<<< HEAD
       <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
         <Sidebar />
         <div className="main-content">
@@ -99,6 +69,16 @@ function App() {
         </div>
         <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onLogin={handleLogin} />
       </div>
+=======
+    <Routes>
+      {/* 로그인 상태에 따라 라우팅 처리 */}
+      <Route path="/home" element={isLoggedIn ? <Navigate to="/main" /> : <Home />} />
+      <Route path="/main/*" element={isLoggedIn ? <Main /> : <Navigate to="/home" />} />
+      <Route path="/" element={<Navigate to={isLoggedIn ? "/main" : "/home"} />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<LoginPage onLogin={() => setIsLoggedIn(true)} />} />
+    </Routes>
+>>>>>>> b2aa420c9d9fd8e43c54bc52f00d352721c6f1f9
   );
 }
 

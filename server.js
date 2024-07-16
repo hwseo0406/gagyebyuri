@@ -35,21 +35,7 @@ app.get('/api/check-db-connection', (req, res) => {
             res.status(500).send('Database connection failed');
         } else {
             res.send('Database connection successful');
-        }
-    });
-});
-
-app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
-    const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
-    db.query(query, [username, password], (err, results) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal server error');
-        } else if (results.length > 0) {
-            res.send({ success: true });
-        } else {
-            res.send({ success: false });
+            console.log('성공');
         }
     });
 });
@@ -89,6 +75,44 @@ app.get('/api/item', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
+//수입/지출 분석
+app.get('/api/item', async (req, res) => {
+    try {
+        const query = 'SELECT item_name, amount FROM items';
+        const accountquery = 'SELECT sender_name, amount FROM income';
+        
+        // Promise를 사용하여 두 개의 쿼리를 병렬로 실행
+        const [itemsResults, accountsResults] = await Promise.all([
+            new Promise((resolve, reject) => {
+                db.query(query, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(accountquery, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            })
+        ]);
+
+        // 응답 데이터 구조 생성
+        const responseData = {
+            items: itemsResults,
+            accounts: accountsResults
+        };
+
+        res.send(responseData);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send('Internal server error');
+    }
+});
+
+=======
+>>>>>>> b2aa420c9d9fd8e43c54bc52f00d352721c6f1f9
 //월별 분석
 app.get('/api/semesteranalysis', async (req, res) => {
     try {

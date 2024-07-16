@@ -97,7 +97,11 @@ const SemesterAnalysis = () => {
       {/* 수입 상세 내역 원형 그래프 */}
       <div className='charts-container'>
         <div className='chart-container'>
+<<<<<<< HEAD
           <ResponsiveContainer width="100%" height="100%">
+=======
+          <ResponsiveContainer width="100%" height={400}>
+>>>>>>> b2aa420c9d9fd8e43c54bc52f00d352721c6f1f9
             <PieChart>
               <Pie
                 dataKey="amount"
@@ -121,7 +125,11 @@ const SemesterAnalysis = () => {
 
         {/* 지출 상세 내역 원형 그래프 */}
         <div className='chart-container'>
+<<<<<<< HEAD
           <ResponsiveContainer width="100%" height="100%">
+=======
+          <ResponsiveContainer width="100%" height={400}>
+>>>>>>> b2aa420c9d9fd8e43c54bc52f00d352721c6f1f9
             <PieChart>
               <Pie
                 dataKey="amount"
