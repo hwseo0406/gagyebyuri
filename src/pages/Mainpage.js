@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate  } from 'react-rout
 import Sidebar from '../components/Sidebar';
 import Analysis from './Analysis';
 import CustomerService from './CustomerService';
-import Excel from './Excel';
 import ExpenseList from './ExpenseList';
-import FeeManagement from './FeeManagement';
 import IncomeList from './IncomeList';
 import MyPage from './MyPage';
 import SemesterAnalysis from './SemesterAnalysis';
@@ -68,9 +66,7 @@ function Home() {
             <Routes>
               <Route path="/analysis/income-expense" element={<Analysis />} />
               <Route path="/account/customer-service" element={<CustomerService />} />
-              <Route path="/management/excel" element={<Excel />} />
               <Route path="/expense/list" element={<ExpenseList />} />
-              <Route path="/analysis/fees" element={<FeeManagement />} />
               <Route path="/income/list" element={<IncomeList />} />
               <Route path="/ForeignCurrency" element={<ForeignCurrency />} />
               <Route path="/account/my-page" element={<MyPage />} />

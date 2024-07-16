@@ -1,5 +1,3 @@
-// ExpenseList.js
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ExpenseModal from './ExpenseModal';
@@ -70,10 +68,14 @@ const ExpenseList = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date) ? 'Invalid date' : date.toISOString().split('T')[0];
+  };
+
   return (
     <div className="expense-list">
       <h1>지출 내역</h1>
-      <div className="table-container">
         <button onClick={() => handleOpenModal()} className="add-button">
           내역추가
         </button>
@@ -118,8 +120,3 @@ const ExpenseList = () => {
 };
 
 export default ExpenseList;
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return isNaN(date) ? 'Invalid date' : date.toISOString().split('T')[0];
-};

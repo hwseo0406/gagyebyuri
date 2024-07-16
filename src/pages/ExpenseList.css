@@ -1,4 +1,3 @@
-/* ExpenseList.css */
 .expense-list {
   width: 80%;
   max-width: 800px;
@@ -18,13 +17,6 @@
 
 .expense-list .add-button:hover {
   background-color: #0056b3;
-}
-
-.expense-list .table-container {
-  width: 80%;
-  max-width: 800px;
-  margin: 200px auto; /* 중앙 정렬 및 위아래 여백 */
-  text-align: center;
 }
 
 .expense-list table {
