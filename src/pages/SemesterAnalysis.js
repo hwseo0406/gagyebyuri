@@ -9,6 +9,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF6666'
 const SemesterAnalysis = () => {
   const [itemData, setItemData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
+  const [receiptsData, setReceiptsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -24,25 +25,35 @@ const SemesterAnalysis = () => {
 
       // items 테이블에서 item_name, amount, item_date 값 가져오기
       const formattedItemData = response.data.items.map(item => ({
-        name: item.item_name,
+        name: item.name,
         amount: parseFloat(item.amount),
-        date: moment(item.item_date).format('YYYY-MM')
+        date: moment(item.date).format('YYYY-MM')
       }));
+
       // income 테이블에서 sender_name, amount, sender_date 값 가져오기
       const formattedIncomeData = response.data.accounts.map(account => ({
-        name: account.sender_name,
+        name: account.name,
         amount: parseFloat(account.amount),
-        date: moment(account.sender_date).format('YYYY-MM')
+        date: moment(account.date).format('YYYY-MM')
+      }));
+
+      // receipts 테이블에서 category, total_cost, purchase_date 값 가져오기
+      const formattedReceiptsData = response.data.receipts.map(receipt => ({
+        name: receipt.name,
+        amount: parseFloat(receipt.amount),
+        date: moment(receipt.date).format('YYYY-MM')
       }));
 
       // 월 목록 설정
       const allMonths = Array.from(new Set([
         ...formattedItemData.map(item => item.date),
-        ...formattedIncomeData.map(account => account.date)
+        ...formattedIncomeData.map(account => account.date),
+        ...formattedReceiptsData.map(receipt => receipt.date)
       ])).sort();
 
       setItemData(formattedItemData);
       setIncomeData(formattedIncomeData);
+      setReceiptsData(formattedReceiptsData);
       setMonths(allMonths);
       setSelectedMonth(allMonths[0] || ''); // 첫 번째 월 선택
       setLoading(false);
@@ -56,6 +67,7 @@ const SemesterAnalysis = () => {
   // 선택한 월에 해당하는 데이터 필터링
   const filteredItemData = itemData.filter(item => item.date === selectedMonth);
   const filteredIncomeData = incomeData.filter(account => account.date === selectedMonth);
+  const filteredReceiptsData = receiptsData.filter(receipt => receipt.date === selectedMonth);
 
   // 월별 합산 금액 계산
   const calculateMonthlyTotal = (data) => {
@@ -64,6 +76,7 @@ const SemesterAnalysis = () => {
 
   const totalItemAmount = calculateMonthlyTotal(filteredItemData);
   const totalIncomeAmount = calculateMonthlyTotal(filteredIncomeData);
+  const totalReceiptsAmount = calculateMonthlyTotal(filteredReceiptsData);
 
   // 라벨 표시
   const priceLabel = ({ value }) => {
@@ -97,11 +110,7 @@ const SemesterAnalysis = () => {
       {/* 수입 상세 내역 원형 그래프 */}
       <div className='charts-container'>
         <div className='chart-container'>
-<<<<<<< HEAD
-          <ResponsiveContainer width="100%" height="100%">
-=======
-          <ResponsiveContainer width="100%" height={400}>
->>>>>>> b2aa420c9d9fd8e43c54bc52f00d352721c6f1f9
+          <ResponsiveContainer width="100%" height={500}>
             <PieChart>
               <Pie
                 dataKey="amount"
@@ -123,25 +132,22 @@ const SemesterAnalysis = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* 지출 상세 내역 원형 그래프 */}
+
+        {/* 영수증 상세 내역 원형 그래프 */}
         <div className='chart-container'>
-<<<<<<< HEAD
-          <ResponsiveContainer width="100%" height="100%">
-=======
-          <ResponsiveContainer width="100%" height={400}>
->>>>>>> b2aa420c9d9fd8e43c54bc52f00d352721c6f1f9
+          <ResponsiveContainer width="100%" height={500}>
             <PieChart>
               <Pie
                 dataKey="amount"
                 isAnimationActive={true}
-                data={filteredItemData}
+                data={filteredReceiptsData}
                 cx="50%"
                 cy="50%"
                 outerRadius="80%"
                 fill="#8884d8"
                 label={priceLabel}
               >
-                {filteredItemData.map((entry, index) => (
+                {filteredReceiptsData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -176,24 +182,25 @@ const SemesterAnalysis = () => {
           </table>
         </div>
 
+
         <div className="table-container">
-          <h3 className="table-title">지출 상세 내역</h3>
+          <h3 className="table-title">영수증 상세 내역</h3>
           <table>
             <thead>
               <tr>
-                <th>항목</th>
+                <th>카테고리</th>
                 <th>금액 (원)</th>
               </tr>
             </thead>
             <tbody>
-              {filteredItemData.map((item, index) => (
+              {filteredReceiptsData.map((receipt, index) => (
                 <tr key={index}>
-                  <td>{item.name}</td>
-                  <td>{item.amount}</td>
+                  <td>{receipt.name}</td>
+                  <td>{receipt.amount}</td>
                 </tr>
               ))}
               <tr>
-                <td colSpan="2" className="total-income">총 금액 : {totalItemAmount} 원</td>
+                <td colSpan="2" className="total-income">총 금액 : {totalReceiptsAmount} 원</td>
               </tr>
             </tbody>
           </table>

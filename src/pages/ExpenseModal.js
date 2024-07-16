@@ -9,21 +9,33 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
   const [purchaseDate, setPurchaseDate] = useState('');
   const [totalCost, setTotalCost] = useState('');
   const [items, setItems] = useState([]);
-  const [category, setCategory] = useState(''); // 카테고리
+  const [selectedCategories, setSelectedCategories] = useState({
+    food: false,
+    transportation: false,
+    shopping: false
+  });
 
   useEffect(() => {
     if (editData) {
       setStoreName(editData.store_name);
       setPurchaseDate(editData.purchase_date);
       setTotalCost(editData.total_cost);
-      setCategory(editData.category); // 카테고리
       fetchItems(editData.id);
+      setSelectedCategories({
+        food: editData.category === '음식',
+        transportation: editData.category === '교통',
+        shopping: editData.category === '쇼핑'
+      });
     } else {
       setStoreName('');
       setPurchaseDate('');
       setTotalCost('');
-      setCategory('');
       setItems([]);
+      setSelectedCategories({
+        food: false,
+        transportation: false,
+        shopping: false
+      });
     }
   }, [editData]);
 
@@ -56,7 +68,11 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
       setStoreName(gptResult.store_name);
       setPurchaseDate(gptResult.purchase_date);
       setTotalCost(gptResult.total_cost);
-      setCategory(gptResult.category); // 카테고리 설정
+      setSelectedCategories({
+        food: gptResult.category === '음식',
+        transportation: gptResult.category === '교통',
+        shopping: gptResult.category === '쇼핑'
+      });
       setItems(gptResult.items);
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -95,10 +111,25 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
       purchase_date: purchaseDate,
       total_cost: totalCost,
       items: items,
-      category: category // 카테고리 추가
+      category: getCategory() // 선택된 카테고리 반환
     };
     onSubmit(formData);
     onClose();
+  };
+
+  const getCategory = () => {
+    const categories = [];
+    if (selectedCategories.food) categories.push('음식');
+    if (selectedCategories.transportation) categories.push('교통');
+    if (selectedCategories.shopping) categories.push('쇼핑');
+    return categories.join(', ');
+  };
+
+  const handleCategoryChange = (categoryName) => {
+    setSelectedCategories(prevState => ({
+      ...prevState,
+      [categoryName]: !prevState[categoryName]
+    }));
   };
 
   return (
@@ -109,16 +140,48 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
         <hr />
         <form onSubmit={handleFormSubmit}>
           <h4>날짜</h4>
-          <input type="date" className="exmodal-input" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)}  />
+          <input type="date" className="exmodal-input" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
+
           <h4>가게 이름</h4>
           <input type="text" className="exmodal-input" placeholder="가게 이름" value={storeName} onChange={(e) => setStoreName(e.target.value)} required />
+
           <h4>카테고리</h4>
-          {/* 카테고리 입력 필드 */}
+          <div>
+            <fieldset className='exmodal-input'>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedCategories.food}
+                onChange={() => handleCategoryChange('food')}
+              />
+              음식
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedCategories.transportation}
+                onChange={() => handleCategoryChange('transportation')}
+              />
+              교통
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedCategories.shopping}
+                onChange={() => handleCategoryChange('shopping')}
+              />
+              쇼핑
+            </label>
+            </fieldset>
+          </div>
+
           <h4>총 가격</h4>
           <input type="number" className="exmodal-input" placeholder="총 가격" value={totalCost} onChange={(e) => setTotalCost(e.target.value)} required />
+
           <h4>영수증 업로드</h4>
           <input type="file" className="exmodal-input" onChange={handleFileChange} />
           {fileUrl && <img src={fileUrl} alt="Uploaded file" style={{ width: '200px', marginTop: '10px' }} />}
+
           <hr />
           <div className="exmodal-container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -127,52 +190,54 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
                 <button type="button" onClick={handleAddItem}>추가</button>
               </div>
             </div>
-              <table className="exmodal-table">
-                <thead>
-                  <tr>
-                    <th>상품명</th>
-                    <th>수량</th>
-                    <th>가격</th>
-                    <th>삭제</th>
+
+            <table className="exmodal-table">
+              <thead>
+                <tr>
+                  <th>상품명</th>
+                  <th>수량</th>
+                  <th>가격</th>
+                  <th>삭제</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item, index) => (
+                  <tr key={index}>
+                    <td>
+                      <input
+                        type="text"
+                        value={item.item_name}
+                        onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={item.amount}
+                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <button type="button" onClick={() => handleRemoveItem(index, item.id)}>삭제</button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {items.map((item, index) => (
-                    <tr key={index}>
-                      <td>
-                        <input
-                          type="text"
-                          value={item.item_name}
-                          onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
-                        />
-                      </td> 
-                      <td>
-                        <input
-                          type="number"
-                          value={item.amount}
-                          onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <button type="button" onClick={() => handleRemoveItem(index, item.id)}>삭제</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <br></br>
-            </div>
-            <button type="submit">저장</button>
-          </form>
-        </div>
+                ))}
+              </tbody>
+            </table>
+
+            <br></br>
+          </div>
+          <button type="submit">저장</button>
+        </form>
       </div>
+    </div>
   );
 };
 
