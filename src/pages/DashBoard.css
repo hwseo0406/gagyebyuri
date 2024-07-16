@@ -1,7 +1,7 @@
 .dashboard-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 250px;
     text-align: center;
     font-family: Arial, sans-serif;
   }
@@ -45,5 +45,9 @@
   .loading-message {
     color: gray;
     margin-top: 20px;
+  }
+
+  .dark-mode .dashboard-content {
+    background-color: #333333;
   }
   

@@ -2,12 +2,20 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './DashBoard.css'; // CSS 파일 추가
 
-const DashBoard = ({name}) => {
+const DashBoard = ({name})  => {
   const [nickname, setNickname] = useState('');
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const checkDarkMode = () => {
+    const darkModeSetting = sessionStorage.getItem('darkMode');
+      if (darkModeSetting === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+  };
+
   useEffect(() => {
+    checkDarkMode();
     const storedNickname = sessionStorage.getItem('id');
     if (storedNickname) {
       setNickname(storedNickname);
