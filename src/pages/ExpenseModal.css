@@ -1,4 +1,4 @@
-.modal {
+.exmodal {
   display: flex;
   position: fixed;
   z-index: 1;
@@ -10,18 +10,35 @@
   background-color: rgba(0, 0, 0, 0.4);
   justify-content: center;
   align-items: center;
+  -ms-overflow-style: none;
+ }
+
+ .exmodal-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+ 
+.exmodal-content::-webkit-scrollbar {
+  display: none;
 }
 
-.modal-content {
+.exmodal-content {
   background-color: #fefefe;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
-  max-width: 500px;
+  max-width: 600px;
   position: relative; /* relative positioning for children */
+  max-height: 80%; /* 최대 높이 설정 */
+  overflow-y: auto; /* 세로 스크롤바 추가 */
 }
 
-.closeModal {
+.excloseModal {
   color: #333; /* dark color */
   position: absolute;
   top: 10px;
@@ -30,13 +47,77 @@
   font-weight: bold;
 }
 
-.closeModal:hover,
-.closeModal:focus {
+.excloseModal:hover,
+.excloseModal:focus {
   color: #000; /* even darker color on hover/focus */
   text-decoration: none;
   cursor: pointer;
 }
 
+.exmodal-content h2,
+.exmodal-content h4 {
+  text-align: left;
+  margin-top: 0; /* 위 여백 제거 */
+}
+
+.exmodal-container {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fefefe;
+}
+
+.exmodal-container button,
+.exmodal button {
+  margin-bottom: 20px; /* 테이블 위에 추가 버튼 여백 */
+  float: right; /* 테이블 오른쪽에 위치 */
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.exmodal-container button:hover,
+.exmodal button:hover {
+  background-color: #0056b3;
+}
+
+.exmodal-table {
+  width: 100%;
+  max-width: 100%; /* 최대 너비 설정 */
+  height: 20px; 
+  border-collapse: collapse;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  table-layout: fixed;
+}
+
+.exmodal-table th,
+.exmodal-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.exmodal-table th {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.exmodal-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.exmodal-table input {
+  width: 115px;
+}
+
+.exmodal-table td button {
+  display: block;
+  margin: 0 auto; /* 가운데 정렬 */
+  float: none;
+  width: 90px; /* 버튼의 너비 조정 */
+}
 .checkbox-container {
   display: flex;
   justify-content: space-around; /* 항목들 사이의 간격을 조정 */

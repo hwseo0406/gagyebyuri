@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate  } from 'react-rout
 import Sidebar from '../components/Sidebar';
 import Analysis from './Analysis';
 import CustomerService from './CustomerService';
-import Excel from './Excel';
 import ExpenseList from './ExpenseList';
-import FeeManagement from './FeeManagement';
 import IncomeList from './IncomeList';
 import MyPage from './MyPage';
 import SemesterAnalysis from './SemesterAnalysis';
@@ -62,27 +60,18 @@ function Home() {
 
   return (
       <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
-        <Sidebar onLogout={handleLogout} />
+        <Sidebar onLogout={handleLogout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <div className="main-content">
-          <header className="header">
-            <button onClick={toggleDarkMode} className="dark-mode-toggle">
-              {darkMode ? 'Light Mode' : 'Dark Mode'}
-            </button>
-            <span>Welcome, {name}</span>
-
-          </header>
           <div className="content">
             <Routes>
               <Route path="/analysis/income-expense" element={<Analysis />} />
               <Route path="/account/customer-service" element={<CustomerService />} />
-              <Route path="/management/excel" element={<Excel />} />
               <Route path="/expense/list" element={<ExpenseList />} />
-              <Route path="/analysis/fees" element={<FeeManagement />} />
               <Route path="/income/list" element={<IncomeList />} />
               <Route path="/ForeignCurrency" element={<ForeignCurrency />} />
               <Route path="/account/my-page" element={<MyPage />} />
               <Route path="/analysis/semester" element={<SemesterAnalysis />} />
-              <Route path="/" element={<Main />} />
+              <Route path="/" element={<Main name={name}/>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

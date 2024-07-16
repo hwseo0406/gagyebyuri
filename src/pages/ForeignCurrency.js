@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ForeignCurrency.css'
+import './ForeignCurrency.css';
 
 function ForeignCurrency() {
   const [exchangeRates, setExchangeRates] = useState({});
@@ -74,7 +74,7 @@ function ForeignCurrency() {
   };
 
   return (
-    <div>
+    <div className="foreign-currency-page">
       <h1>외화 가계부</h1>
 
       <div>

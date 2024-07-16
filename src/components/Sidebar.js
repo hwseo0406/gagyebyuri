@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Sidebar.css';
 
 
-const Sidebar = ({ onLogout }) => {
+const Sidebar = ({ onLogout, darkMode, toggleDarkMode  }) => {
   const [hovered, setHovered] = useState(false);
   const [name, setName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,12 +18,20 @@ const Sidebar = ({ onLogout }) => {
 
   return (
     <div className={`sidebar ${hovered ? 'sidebar-hover' : ''}`}>
-      <div className="sidebar-logo" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <Link to="/">
-          <img src='/KakaoTalk_20240711_092137325.jpg' alt="가계뷰리 로고" className="logo-image" />
-          <span>가계뷰리</span>
-        </Link>
+      <div className="sidebar-logo" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={toggleDarkMode}>
+          {darkMode ? <img src='/KakaoTalk_20240716_093402803_01.png' alt="가계부엉 로고" className="logo-image" /> : <img src='/KakaoTalk_20240716_093402803.png' alt="가계부엉 로고" className="logo-image" />}
+          <span className='logoName'>가계부엉</span>
       </div>
+      <div
+          className="sidebar-item"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <Link to="/">
+            <i className="icon fas fa-home"></i>
+            <span>홈</span>
+          </Link>
+        </div>
       <div className="sidebar-links">
         <div className="sidebar-item-header">
             <span>수입 및 지출</span>
@@ -84,7 +92,7 @@ const Sidebar = ({ onLogout }) => {
             <span>월별 분석</span>
           </Link>
         </div>
-        <div className="sidebar-item-header">
+        {/* <div className="sidebar-item-header">
             <span>관리</span>
         </div>
         <div
@@ -96,7 +104,7 @@ const Sidebar = ({ onLogout }) => {
           <i className="icon icon-management fas fa-users"></i>
             <span>회비 관리</span>
           </Link>
-        </div>
+        </div> */}
         {/* <div
           className="sidebar-item"
           onMouseEnter={handleMouseEnter}

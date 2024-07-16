@@ -1,4 +1,4 @@
-.charts-container {
+.analysis-page .charts-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,14 +8,13 @@
   width: 100%;
 }
 
-.chart-container {
-  flex: 1 1 45%; 
+.analysis-page .chart-container {
+  flex: 1 1 45%;
   min-width: 300px;
   height: 400px;
-  height: 200px;
 }
 
-.tables-container {
+.analysis-page .tables-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -26,7 +25,7 @@
   width: 100%;
 }
 
-.table-container {
+.analysis-page .table-container {
   flex: 1 1 45%;
   min-width: 300px;
   display: flex;
@@ -34,42 +33,43 @@
   align-items: center;
 }
 
-.table-title {
+.analysis-page .table-title {
   margin-bottom: 10px;
   font-size: 24px;
   font-weight: bold;
 }
 
-table {
+.analysis-page table {
   width: 100%;
   border-collapse: collapse;
   font-size: 20px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-th, td {
+.analysis-page th,
+.analysis-page td {
   border: 1px solid #ddd;
   padding: 12px 15px;
 }
 
-th {
+.analysis-page th {
   background-color: #f4f4f4;
   text-align: center;
 }
 
-td {
+.analysis-page td {
   text-align: center;
 }
 
-tr:nth-child(even) {
+.analysis-page tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-tr:hover {
+.analysis-page tr:hover {
   background-color: #f1f1f1;
 }
 
-.total-income {
+.analysis-page .total-income {
   font-weight: bold;
   font-size: 18px;
   background-color: #f4f4f4;
