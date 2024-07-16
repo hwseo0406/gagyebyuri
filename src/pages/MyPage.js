@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './MyPage.css';
 
-const MyPage = () => {
+const MyPage = ({name}) => {
   const [password, setPassword] = useState('');
   const [newName, setNewName] = useState('');
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
@@ -47,6 +47,7 @@ const MyPage = () => {
           sessionStorage.setItem('name', newName);
           setMessage('성공적으로 이름이 변경되었습니다.');
           setError('');
+          window.location.reload();
         } else {
           setError('Failed to change name');
         }
@@ -85,6 +86,7 @@ const MyPage = () => {
   return (
     <div className="mypage-container">
       <h1>마이 페이지</h1>
+      <h2>이름: {name}</h2>
       {!isPasswordVerified ? (
         <div className="verification-section">
           <input

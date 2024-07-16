@@ -69,7 +69,7 @@ function Home() {
               <Route path="/expense/list" element={<ExpenseList />} />
               <Route path="/income/list" element={<IncomeList />} />
               <Route path="/ForeignCurrency" element={<ForeignCurrency />} />
-              <Route path="/account/my-page" element={<MyPage />} />
+              <Route path="/account/my-page" element={<MyPage name={name}/>} />
               <Route path="/analysis/semester" element={<SemesterAnalysis />} />
               <Route path="/" element={<Main name={name}/>} />
               <Route path="*" element={<NotFound />} />
