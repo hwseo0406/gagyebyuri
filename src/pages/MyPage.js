@@ -45,7 +45,7 @@ const MyPage = () => {
       .then(data => {
         if (data.success) {
           sessionStorage.setItem('name', newName);
-          setMessage('Name changed successfully');
+          setMessage('성공적으로 이름이 변경되었습니다.');
           setError('');
         } else {
           setError('Failed to change name');

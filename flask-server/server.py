@@ -576,19 +576,19 @@ def verify_password():
         connection.close()
 
 # 이름 변경
-@app.route('/update-name', methods=['POST'])
-def update_name():
-    data = request.json
-    user_id = data.get('id')
-    new_name = data.get('name')
+@app.route('/change-name', methods=['POST'])
+def change_name():
+    data = request.get_json()
+    id = data.get('id')
+    new_name = data.get('newName')
 
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
             sql = "UPDATE users SET name=%s WHERE id=%s"
-            cursor.execute(sql, (new_name, user_id))
+            cursor.execute(sql, (new_name, id))
             connection.commit()
-            return jsonify(success=True)
+            return jsonify({'success': True})
     finally:
         connection.close()
         
