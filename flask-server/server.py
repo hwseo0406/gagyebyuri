@@ -9,7 +9,7 @@ import json
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from datetime import timedelta
+from datetime import date, datetime
 
 #환경변수
 load_dotenv() 
@@ -374,29 +374,85 @@ def gptapi(infer_text):
     return data
 
 # GPT API 호출
-def gptapi_income(infer_text):
-    timestamp = int(time.time())
-    if use_test_data:
-        with open('gpt_json_income.json', 'r', encoding='utf-8') as f:
-            message = json.load(f)
-    else:
-        client = OpenAI(api_key = GPT_API_KEY)
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            response_format={"type": "json_object"},
-            messages = [
-                {"role": "system", "content": "You are a helpful assistant to analyze the owner_name, income (sender_name, amount also amount is number) and account balance from the account and output it in JSON format"},
-                {"role": "user", "content": f'Please analyze the {infer_text}. Only include owner_name, income [] and account balance'},
-            ]
-        )
-        message = response.choices[0].message.content
+# def gptapi_income(infer_text):
+#     timestamp = int(time.time())
+#     if use_test_data:
+#         with open('gpt_json_income.json', 'r', encoding='utf-8') as f:
+#             message = json.load(f)
+#     else:
+#         client = OpenAI(api_key = GPT_API_KEY)
+#         response = client.chat.completions.create(
+#             model="gpt-3.5-turbo",
+#             response_format={"type": "json_object"},
+#             messages = [
+#                 {"role": "system", "content": "You are a helpful assistant to analyze the owner_name, income (sender_name, amount also amount is number) and account balance from the account and output it in JSON format"},
+#                 {"role": "user", "content": f'Please analyze the {infer_text}. Only include owner_name, income [] and account balance'},
+#             ]
+#         )
+#         message = response.choices[0].message.content
 
-    data = json.loads(message)
-    gpt_file_path = os.path.join(UPLOAD_FOLDER, f'gpt_json_income{timestamp}.json')
-    with open(gpt_file_path, 'w', encoding='utf-8') as f:
-        json.dump(message, f, ensure_ascii = False, indent = 4)
+#     data = json.loads(message)
+#     gpt_file_path = os.path.join(UPLOAD_FOLDER, f'gpt_json_income{timestamp}.json')
+#     with open(gpt_file_path, 'w', encoding='utf-8') as f:
+#         json.dump(message, f, ensure_ascii = False, indent = 4)
 
-    return data
+#     return data
+
+def fetch_income_expense_data(nickname):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM receipts WHERE nickname = %s", (nickname,))
+            expenses = cursor.fetchall()
+            cursor.execute("SELECT * FROM income WHERE nickname = %s", (nickname,))
+            incomes = cursor.fetchall()
+    finally:
+        connection.close()
+
+    # Convert date objects to strings
+    for record in expenses:
+        if isinstance(record.get('purchase_date'), (date, datetime)):
+            record['purchase_date'] = record['purchase_date'].isoformat()
+
+    for record in incomes:
+        if isinstance(record.get('sender_date'), (date, datetime)):
+            record['sender_date'] = record['sender_date'].isoformat()
+
+    return expenses, incomes
+
+#gpt api
+def analyze_gptapi(incomes, expenses):
+    client = OpenAI(api_key = GPT_API_KEY)
+    data = {
+        "incomes": incomes,
+        "expenses": expenses
+    }
+    analysis_request = """
+    Comparison of total expenses and total income.
+    Assessment of balance between income and expenses.
+    Monthly analysis of income and expenses.
+    """
+    analysis_request += json.dumps(data)
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant to analyze the expenditure and income data. Please respond in Korean."},
+            {"role": "user", "content": analysis_request}
+        ]
+    )
+    message = response.choices[0].message.content
+    return message
+
+@app.route('/analyze', methods=['POST'])
+def analyze_income_expense():
+    nickname = request.json.get('nickname')
+    if not nickname:
+        return jsonify({'error': 'No nickname provided'}), 400
+
+    expenses, incomes = fetch_income_expense_data(nickname)
+    analysis_result = analyze_gptapi(incomes, expenses)
+    return jsonify({'analysisResult': analysis_result})
 
 #로그인 기능
 
