@@ -1,7 +1,9 @@
+// ExpenseList.js
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ExpenseModal from './ExpenseModal';
-import './ExpenseList.css';
+import './ExpenseList.css'; // 수정된 CSS 파일을 import
 
 const ExpenseList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,11 +12,12 @@ const ExpenseList = () => {
   const [expenses, setExpenses] = useState([]);
   const [nickname, setNickname] = useState('');
   const [total, setTotal] = useState(null);
+
   useEffect(() => {
     const storedNickname = sessionStorage.getItem('id');
     if (storedNickname) {
       setNickname(storedNickname);
-      fetchExpenses(nickname)
+      fetchExpenses(nickname);
     }
   }, [nickname]);
 
@@ -23,7 +26,7 @@ const ExpenseList = () => {
       const response = await axios.get(`http://localhost:5000/ExpenseList/${nickname}`);
       setExpenses(response.data.receipts);
       setTotal(response.data.total);
-      console.log(response.data.total)
+      console.log(response.data.total);
     } catch (error) {
       console.error('Error fetching expenses:', error);
     }
@@ -47,7 +50,7 @@ const ExpenseList = () => {
       } else {
         await axios.post('http://localhost:5000/save', {
           nickname: nickname,
-          gptResult: data
+          gptResult: data,
         });
       }
       setIsModalOpen(false);
@@ -67,20 +70,12 @@ const ExpenseList = () => {
   };
 
   return (
-    <div>
+    <div className="expense-list">
       <h1>지출 내역</h1>
-      <div className="table-container">
-        
-      <button onClick={() => handleOpenModal()} className="add-button">
-        내역추가
-      </button>
-      <ExpenseModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleModalSubmit}
-        editData={editData}
-      />
-
+        <button onClick={() => handleOpenModal()} className="add-button">
+          내역 추가
+        </button>
+        <ExpenseModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleModalSubmit} editData={editData} />
         <table>
           <thead>
             <tr>
@@ -109,7 +104,6 @@ const ExpenseList = () => {
         </table>
         <h3 style={{ textAlign: 'right' }}>총 합계: {total}원</h3>
       </div>
-    </div>
   );
 };
 

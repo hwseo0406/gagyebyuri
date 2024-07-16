@@ -1,0 +1,61 @@
+/* styles.css */
+
+.income-list {
+    width: 80%;
+    max-width: 800px;
+    margin: 200px auto; /* 중앙 정렬 및 위아래 여백 */
+    text-align: center;
+  }
+  
+  .income-list button.add-button {
+    margin-bottom: 20px; /* 테이블 위에 추가 버튼 여백 */
+    float: right; /* 테이블 오른쪽에 위치 */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .income-list button.add-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .income-list table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .income-list table th,
+  .income-list table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  .income-list table th {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .income-list table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .income-list table tbody tr:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .income-list table button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .income-list table button:hover {
+    background-color: #0056b3;
+  }  

@@ -62,15 +62,8 @@ function Home() {
 
   return (
       <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
-        <Sidebar onLogout={handleLogout} />
+        <Sidebar onLogout={handleLogout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <div className="main-content">
-          <header className="header">
-            <button onClick={toggleDarkMode} className="dark-mode-toggle">
-              {darkMode ? 'Light Mode' : 'Dark Mode'}
-            </button>
-            <span>Welcome, {name}</span>
-
-          </header>
           <div className="content">
             <Routes>
               <Route path="/analysis/income-expense" element={<Analysis />} />
@@ -82,7 +75,7 @@ function Home() {
               <Route path="/ForeignCurrency" element={<ForeignCurrency />} />
               <Route path="/account/my-page" element={<MyPage />} />
               <Route path="/analysis/semester" element={<SemesterAnalysis />} />
-              <Route path="/" element={<Main />} />
+              <Route path="/" element={<Main name={name}/>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

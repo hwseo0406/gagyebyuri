@@ -41,11 +41,6 @@ h1 {
   z-index: 999; /* 헤더를 사이드바 아래에 렌더링 */
 }
 
-.dark-mode-toggle:hover,
-.login-button:hover {
-  opacity: 0.8;
-}
-
 body.dark-mode {
   background-color: #121212;
   color: #ffffff;
@@ -55,32 +50,4 @@ body.dark-mode {
   display: flex;
   height: 100vh;
   margin: 0; /* 상단 여백 제거 */
-}
-
-.dark-mode-toggle,
-.login-button {
-  margin-left: 10px;
-  padding: 8px 16px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: background-color 0.3s;
-}
-
-body.dark-mode .dark-mode-toggle,
-body.dark-mode .login-button {
-  background-color: #495057;
-}
-
-.dark-mode-toggle:hover,
-.login-button:hover {
-  background-color: #0056b3;
-}
-
-body.dark-mode .dark-mode-toggle:hover,
-body.dark-mode .login-button:hover {
-  background-color: #6c757d;
 }
