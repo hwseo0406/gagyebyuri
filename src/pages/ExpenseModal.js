@@ -4,22 +4,25 @@ import './ExpenseModal.css';
 
 const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
   const [file, setFile] = useState(null);
-  const [fileUrl, setFileUrl] = useState(null); // 이미지 URL 상태 추가
+  const [fileUrl, setFileUrl] = useState(null);
   const [storeName, setStoreName] = useState('');
   const [purchaseDate, setPurchaseDate] = useState('');
   const [totalCost, setTotalCost] = useState('');
   const [items, setItems] = useState([]);
+  const [category, setCategory] = useState(''); // 카테고리
 
   useEffect(() => {
     if (editData) {
       setStoreName(editData.store_name);
       setPurchaseDate(editData.purchase_date);
       setTotalCost(editData.total_cost);
+      setCategory(editData.category); // 카테고리
       fetchItems(editData.id);
     } else {
       setStoreName('');
       setPurchaseDate('');
       setTotalCost('');
+      setCategory('');
       setItems([]);
     }
   }, [editData]);
@@ -38,7 +41,7 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
   const handleFileChange = async (e) => {
     const uploadedFile = e.target.files[0];
     setFile(uploadedFile);
-    setFileUrl(URL.createObjectURL(uploadedFile)); // 이미지 URL 생성
+    setFileUrl(URL.createObjectURL(uploadedFile));
 
     const formData = new FormData();
     formData.append('file', uploadedFile);
@@ -53,6 +56,7 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
       setStoreName(gptResult.store_name);
       setPurchaseDate(gptResult.purchase_date);
       setTotalCost(gptResult.total_cost);
+      setCategory(gptResult.category); // 카테고리 설정
       setItems(gptResult.items);
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -90,6 +94,7 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
       purchase_date: purchaseDate,
       total_cost: totalCost,
       items: items,
+      category: category // 카테고리 추가
     };
     onSubmit(formData);
     onClose();
@@ -97,7 +102,6 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
 
   return (
     <div className="modal">
-      {console.log(items)}
       <div className="modal-content">
         <span className="closeModal" onClick={onClose}>&times;</span>
         <h2>영수증 업로드</h2>
@@ -108,6 +112,48 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
           <input type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
           <input type="number" placeholder="총 가격" value={totalCost} onChange={(e) => setTotalCost(e.target.value)} required />
           <button type="button" onClick={handleAddItem}>항목 추가</button>
+
+          {/* 카테고리 */}
+          <fieldset>
+            <legend>카테고리</legend>
+            <div className="checkbox-container">
+              <div className="checkbox-item">
+                <input
+                  type="radio"
+                  id="food"
+                  name="category"
+                  value="음식"
+                  checked={category === '음식'}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+                <label htmlFor="food">음식</label>
+              </div>
+              <div className="checkbox-item">
+                <input
+                  type="radio"
+                  id="transport"
+                  name="category"
+                  value="교통"
+                  checked={category === '교통'}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+                <label htmlFor="transport">교통</label>
+              </div>
+              <div className="checkbox-item">
+                <input
+                  type="radio"
+                  id="shopping"
+                  name="category"
+                  value="쇼핑"
+                  checked={category === '쇼핑'}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+                <label htmlFor="shopping">쇼핑</label>
+              </div>
+
+            </div>
+          </fieldset>
+
           <div className="table-container">
             <table>
               <thead>

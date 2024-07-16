@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+from datetime import datetime
+# 날짜 변환
 import pymysql
 import requests
 import uuid
@@ -107,26 +109,37 @@ def save_data():
     nickname = data.get('nickname')
     gpt_result = data.get('gptResult')
 
+    store_name = gpt_result.get('store_name')
+    purchase_date = gpt_result.get('purchase_date')
+    total_cost = gpt_result.get('total_cost')
+    category = gpt_result.get('category')  # 카테고리 값 가져오기
+
+    # 날짜 형식 변환
+    formatted_date = format_date(purchase_date)
+
     connection = get_db_connection()
     with connection.cursor() as cursor:
-        # 가계부 데이터 저장
         sql = """
-        INSERT INTO receipts (nickname, store_name, purchase_date, total_cost)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO receipts (nickname, store_name, purchase_date, total_cost, category)
+        VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(sql, (nickname, gpt_result['store_name'], gpt_result['purchase_date'], gpt_result['total_cost']))
+        cursor.execute(sql, (nickname, store_name, formatted_date, total_cost, category))
         receipt_id = cursor.lastrowid
-        
-        # 항목 데이터 저장
-        for item in gpt_result['items']:
+
+        items = gpt_result.get('items', [])
+        for item in items:
+            item_name = item.get('item_name')
+            quantity = item.get('quantity')
+            amount = item.get('amount')
             sql = """
             INSERT INTO items (receipt_id, item_name, quantity, amount)
             VALUES (%s, %s, %s, %s)
             """
-            cursor.execute(sql, (receipt_id, item['item_name'], item['quantity'], item['amount']))
-        
+            cursor.execute(sql, (receipt_id, item_name, quantity, amount))
+
     connection.commit()
     connection.close()
+
     return jsonify({'message': '데이터 저장 성공'})
 
 @app.route('/incomesave', methods=['POST'])
@@ -149,13 +162,14 @@ def save_data_income():
     connection.close()
     return jsonify({'message': '데이터 저장 성공'})
 
+
 # 지출내역 보여주기
 @app.route('/ExpenseList/<nickname>', methods=['GET'])
 def get_receipts(nickname):
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = """
-        SELECT r.id, r.store_name, r.purchase_date, r.total_cost
+        SELECT r.id, r.store_name, r.purchase_date, r.total_cost, r.category
         FROM receipts r
         WHERE r.nickname = %s
         """
@@ -173,6 +187,8 @@ def get_receipts(nickname):
         
     connection.close()
     return jsonify({"receipts": receipts,  "total": total["total"]})
+
+
 
 # 수익 내역 보여주기
 @app.route('/income_list/<nickname>', methods = ['GET'])
@@ -203,6 +219,13 @@ def delete_income(id):
     connection.close()
     return jsonify({'message': '수입 내역 삭제 성공'})
 
+def format_date(date_string):
+    try:
+        date_obj = datetime.strptime(date_string, '%a, %d %b %Y %H:%M:%S GMT')
+        return date_obj.strftime('%Y-%m-%d')
+    except ValueError:
+        return date_string  # 이미 올바른 형식일 경우 그대로 반환
+
 # 영수증 수정
 @app.route('/update_receipt/<int:id>', methods=['PUT'])
 def update_receipt(id):
@@ -210,35 +233,22 @@ def update_receipt(id):
     store_name = data.get('store_name')
     purchase_date = data.get('purchase_date')
     total_cost = data.get('total_cost')
-    items = data.get('items', [])
+    category = data.get('category')  # 추가된 카테고리
+
+    formatted_date = format_date(purchase_date)
 
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = """
         UPDATE receipts
-        SET store_name = %s, purchase_date = %s, total_cost = %s
+        SET store_name = %s, purchase_date = %s, total_cost = %s, category = %s
         WHERE id = %s
         """
-        cursor.execute(sql, (store_name, purchase_date, total_cost, id))
-
-        for item in items:
-            if 'id' in item:
-                sql = """
-                UPDATE items
-                SET item_name = %s, quantity = %s, amount = %s
-                WHERE id = %s
-                """
-                cursor.execute(sql, (item['item_name'], item['quantity'], item['amount'], item['id']))
-            else:
-                sql = """
-                INSERT INTO items (receipt_id, item_name, quantity, amount)
-                VALUES (%s, %s, %s, %s)
-                """
-                cursor.execute(sql, (id, item['item_name'], item['quantity'], item['amount']))
-
-    connection.commit()
+        cursor.execute(sql, (store_name, formatted_date, total_cost, category, id))
+        connection.commit()
     connection.close()
-    return jsonify({'message': '지출 내역 수정 성공'})
+
+    return jsonify({'message': '영수증 업데이트 성공'})
 
 # 영수증 삭제
 @app.route('/delete_receipt/<int:id>', methods=['DELETE'])

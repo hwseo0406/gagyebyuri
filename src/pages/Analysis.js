@@ -117,7 +117,7 @@ const Analysis = () => {
           <table>
             <thead>
               <tr>
-                <th>송신자</th>
+                <th>수입출처</th>
                 <th>금액 (원)</th>
               </tr>
             </thead>
