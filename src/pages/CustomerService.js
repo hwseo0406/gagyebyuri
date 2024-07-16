@@ -11,8 +11,8 @@ const CustomerService = () => {
         <section className="customer-service-faq">
           <h2>자주 묻는 질문</h2>
           <div className="customer-service-question">
-            <h3>Q1: 새로운 계정을 어떻게 만드나요?</h3>
-            <p>A1: 홈페이지에서 "회원가입" 버튼을 클릭하고 필요한 정보를 입력하시면 됩니다.</p>
+            <h3>Q1: 지출내역을 어떻게 만드나요?</h3>
+            <p>A1: 지출내역 페이지에서 영수증을 업로드하거나 내역을 입력하세요.</p>
           </div>
           <div className="customer-service-question">
             <h3>Q2: 비밀번호를 어떻게 재설정하나요?</h3>
@@ -27,7 +27,7 @@ const CustomerService = () => {
         <section className="customer-service-contact">
           <h2>연락처</h2>
           <p>다른 질문이 있으시거나 추가 도움이 필요하시면 고객센터로 연락해 주세요:</p>
-          <p><strong>전화번호:</strong> 010-6862-7407</p>
+          <p><strong>전화번호:</strong> 010-1234-5678</p>
           <p><strong>이메일:</strong> kdigital@bu.ac.kr</p>
         </section>
       </div>

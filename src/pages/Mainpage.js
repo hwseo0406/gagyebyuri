@@ -21,9 +21,14 @@ function Home() {
   const checkSession = () => {
     const id = sessionStorage.getItem('id');
     const name = sessionStorage.getItem('name');
+    const darkModeSetting = sessionStorage.getItem('darkMode');
     if (id && name) {
       setIsLoggedIn(true);
       setName(name);
+        if (darkModeSetting === 'true') {
+          setDarkMode(true);
+          document.body.classList.add('dark-mode');
+        }
     } else {
       setIsLoggedIn(false);
     }
@@ -35,8 +40,10 @@ function Home() {
 
 
   const toggleDarkMode = () => {
+    const newMode = !darkMode;
     setDarkMode(prevMode => !prevMode);
-    document.body.classList.toggle('dark-mode', !darkMode);
+    sessionStorage.setItem('darkMode', newMode.toString());
+    document.body.classList.toggle('dark-mode', newMode);
   };
 
   const handleLogout = () => {
@@ -69,9 +76,9 @@ function Home() {
               <Route path="/expense/list" element={<ExpenseList />} />
               <Route path="/income/list" element={<IncomeList />} />
               <Route path="/ForeignCurrency" element={<ForeignCurrency />} />
-              <Route path="/account/my-page" element={<MyPage />} />
+              <Route path="/account/my-page" element={<MyPage name={name}/>} />
               <Route path="/analysis/semester" element={<SemesterAnalysis />} />
-              <Route path="/" element={<Main name={name}/>} />
+              <Route path="/" element={<Main name={name} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
