@@ -70,7 +70,8 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
   };
 
   const handleAddItem = () => {
-    setItems([...items, { id: null, item_name: '', quantity: '', amount: '' }]);
+    const newItem = { id: null, item_name: '', quantity: '', amount: '' };
+    setItems([...items, newItem]);
   };
 
   const handleRemoveItem = async (index, itemId) => {
@@ -101,105 +102,77 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <span className="closeModal" onClick={onClose}>&times;</span>
+    <div className="exmodal">
+      <div className="exmodal-content">
+        <span className="excloseModal" onClick={onClose}>&times;</span>
         <h2>영수증 업로드</h2>
+        <hr />
         <form onSubmit={handleFormSubmit}>
-          <input type="file" onChange={handleFileChange} />
+          <h4>날짜</h4>
+          <input type="date" className="exmodal-input" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)}  />
+          <h4>가게 이름</h4>
+          <input type="text" className="exmodal-input" placeholder="가게 이름" value={storeName} onChange={(e) => setStoreName(e.target.value)} required />
+          <h4>카테고리</h4>
+          {/* 카테고리 입력 필드 */}
+          <h4>총 가격</h4>
+          <input type="number" className="exmodal-input" placeholder="총 가격" value={totalCost} onChange={(e) => setTotalCost(e.target.value)} required />
+          <h4>영수증 업로드</h4>
+          <input type="file" className="exmodal-input" onChange={handleFileChange} />
           {fileUrl && <img src={fileUrl} alt="Uploaded file" style={{ width: '200px', marginTop: '10px' }} />}
-          <input type="text" placeholder="가게 이름" value={storeName} onChange={(e) => setStoreName(e.target.value)} required />
-          <input type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
-          <input type="number" placeholder="총 가격" value={totalCost} onChange={(e) => setTotalCost(e.target.value)} required />
-          <button type="button" onClick={handleAddItem}>항목 추가</button>
-
-          {/* 카테고리 */}
-          <fieldset>
-            <legend>카테고리</legend>
-            <div className="checkbox-container">
-              <div className="checkbox-item">
-                <input
-                  type="radio"
-                  id="food"
-                  name="category"
-                  value="음식"
-                  checked={category === '음식'}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-                <label htmlFor="food">음식</label>
+          <hr />
+          <div className="exmodal-container">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4 style={{ textAlign: 'left' }}>상세내역</h4>
+              <div style={{ textAlign: 'right' }}>
+                <button type="button" onClick={handleAddItem}>추가</button>
               </div>
-              <div className="checkbox-item">
-                <input
-                  type="radio"
-                  id="transport"
-                  name="category"
-                  value="교통"
-                  checked={category === '교통'}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-                <label htmlFor="transport">교통</label>
-              </div>
-              <div className="checkbox-item">
-                <input
-                  type="radio"
-                  id="shopping"
-                  name="category"
-                  value="쇼핑"
-                  checked={category === '쇼핑'}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-                <label htmlFor="shopping">쇼핑</label>
-              </div>
-
             </div>
-          </fieldset>
-
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>상품명</th>
-                  <th>수량</th>
-                  <th>가격</th>
-                  <th>삭제</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      <input
-                        type="text"
-                        value={item.item_name}
-                        onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
-                      />
-                    </td> 
-                    <td>
-                      <input
-                        type="number"
-                        value={item.amount}
-                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                    <button type="button" onClick={() => handleRemoveItem(index, item.id)}>삭제</button>
-                    </td>
+              <table className="exmodal-table">
+                <thead>
+                  <tr>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>가격</th>
+                    <th>삭제</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <button type="submit">저장</button>
-        </form>
+                </thead>
+                <tbody>
+                  {items.map((item, index) => (
+                    <tr key={index}>
+                      <td>
+                        <input
+                          type="text"
+                          value={item.item_name}
+                          onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
+                        />
+                      </td> 
+                      <td>
+                        <input
+                          type="number"
+                          value={item.amount}
+                          onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <button type="button" onClick={() => handleRemoveItem(index, item.id)}>삭제</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <br></br>
+            </div>
+            <button type="submit">저장</button>
+          </form>
+        </div>
       </div>
-    </div>
   );
 };
 

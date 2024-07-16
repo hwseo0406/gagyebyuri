@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ExpenseModal from './ExpenseModal';
-import './ExpenseList.css';
+import './ExpenseList.css'; // 수정된 CSS 파일을 import
 
 const ExpenseList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,10 +68,14 @@ const ExpenseList = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date) ? 'Invalid date' : date.toISOString().split('T')[0];
+  };
+
   return (
-    <div>
+    <div className="expense-list">
       <h1>지출 내역</h1>
-      <div className="table-container">
         <button onClick={() => handleOpenModal()} className="add-button">
           내역추가
         </button>
@@ -112,13 +116,7 @@ const ExpenseList = () => {
         </table>
         <h3 style={{ textAlign: 'right' }}>총 합계: {total}원</h3>
       </div>
-    </div>
   );
 };
 
 export default ExpenseList;
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return isNaN(date) ? 'Invalid date' : date.toISOString().split('T')[0];
-};
