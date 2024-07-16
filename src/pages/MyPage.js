@@ -23,7 +23,7 @@ const MyPage = ({name}) => {
           setIsPasswordVerified(true);
           setError('');
         } else {
-          setError('Invalid password');
+          setError('비밀번호가 다릅니다.');
         }
       })
       .catch(error => {
@@ -86,7 +86,6 @@ const MyPage = ({name}) => {
   return (
     <div className="mypage-container">
       <h1>마이 페이지</h1>
-      <h2>이름: {name}</h2>
       {!isPasswordVerified ? (
         <div className="verification-section">
           <input
@@ -100,6 +99,7 @@ const MyPage = ({name}) => {
         </div>
       ) : (
         <div className="update-section">
+          <h2>이름: {name}</h2>
           <input
             type="text"
             placeholder="새 이름을 입력하세요"

@@ -1,8 +1,14 @@
 .foreign-currency-page {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  background-color: #ffffff;
   margin: 0;
   padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.foreign-content {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .foreign-currency-page .container {
@@ -32,7 +38,7 @@
 
 .foreign-currency-page .ForeignButton {
   width: 100%;
-  background-color: #4CAF50;
+  background-color: #007bff;
   color: white;
   padding: 10px;
   margin: 5px 0 10px;
@@ -43,7 +49,7 @@
 }
 
 .foreign-currency-page .ForeignButton:hover {
-  background-color: #45a049;
+  background-color: #0056b3;
 }
 
 .foreign-currency-page ul {
@@ -67,4 +73,41 @@
 .foreign-currency-page .currency-item {
   display: flex;
   justify-content: space-between;
+}
+
+/* 다크모드 */
+.dark-mode .foreign-currency-page {
+  background-color: #2b2b2b;
+}
+
+.dark-mode .foreign-currency-page h1,
+.dark-mode .foreign-currency-page h2 {
+  color: #DEDEDE;
+}
+
+.dark-mode .foreign-currency-page input[type="number"],
+.dark-mode .foreign-currency-page input[type="text"],
+.dark-mode .foreign-currency-page select {
+  background-color: #757575;
+  color: #DEDEDE;
+  border: 1px solid #666;
+}
+
+.dark-mode .foreign-currency-page .ForeignButton {
+  background-color: rgba(36, 111, 240, 0.692);
+  color: #DEDEDE;
+}
+
+.dark-mode .foreign-currency-page .ForeignButton:hover {
+  background-color: rgba(36, 111, 240, 0.871);
+}
+
+
+.dark-mode .foreign-currency-page li {
+  background: #757575;
+  border: 1px solid #666;
+}
+
+.dark-mode .foreign-currency-page p {
+  color: #DEDEDE;
 }

@@ -132,3 +132,70 @@
 .checkbox-item input[type="checkbox"] {
   margin-right: 5px; /* 체크박스와 레이블 사이의 간격 */
 }
+
+/* 다크모드 */
+
+.dark-mode .exmodal {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .exmodal-content {
+  background-color: #2b2b2b;
+  color: #DEDEDE;
+  border: 1px solid #DEDEDE;
+}
+
+.dark-mode .exmodal-content input {
+  background-color: #757575;
+  color: #DEDEDE;
+  border: 1px solid #666;
+}
+
+.dark-mode .excloseModal {
+  color: #DEDEDE;
+}
+
+.dark-mode .excloseModal:hover,
+.dark-mode .excloseModal:focus {
+  color: #555;
+}
+
+.dark-mode .exmodal-content h2,
+.dark-mode .exmodal-content h4 {
+  color: #DEDEDE;
+}
+
+.dark-mode .exmodal-container {
+  background-color: #2b2b2b;
+}
+
+.dark-mode .exmodal-container button,
+.dark-mode .exmodal button {
+  background-color: rgba(36, 111, 240, 0.692);
+  color: #DEDEDE;
+}
+
+.dark-mode .exmodal-container button:hover,
+.dark-mode .exmodal button:hover {
+  background-color: rgba(36, 111, 240, 0.871);
+}
+
+.dark-mode .exmodal-table {
+  background-color: #444;
+  color: #DEDEDE;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .exmodal-table th {
+  border: 1px solid #989898;
+}
+
+.dark-mode .exmodal-table td {
+  border: 1px solid #989898;
+}
+
+.dark-mode .exmodal-table input {
+  background-color: #757575;
+  color: #DEDEDE;
+  border: 1px solid #666;
+}

@@ -51,3 +51,14 @@
     background-color: #333333;
   }
   
+  .dark-mode .analyze-button {
+    background-color: rgba(36, 111, 240, 0.692);
+  }
+  
+  .dark-mode .analyze-button:hover {
+    background-color: rgba(36, 111, 240, 0.871);
+  }
+
+  .dark-mode  .loading-message {
+    color: rgb(213, 213, 213);
+  }

@@ -71,7 +71,7 @@ const IncomeList = () => {
         내역 추가
       </button>
       <IncomeModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleModalSubmit} editData={editData} />
-      <table>
+      <table className='income-table'>
         <thead>
           <tr>
             <th>수입 출처</th>

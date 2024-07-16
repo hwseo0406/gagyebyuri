@@ -6,11 +6,13 @@
 
 .customer-service-root .background-image {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+    margin: 0px;
+    top: 0px;
+    left: 10px;
+    width: calc(100% - 20px);
     height: 100%;
     object-fit: cover;
+    border-radius: 11px;
     opacity: 0.5; /* 투명도 설정 */
     z-index: -1; /* 배경에 배치 */
 }
@@ -20,7 +22,7 @@
     z-index: 1; /* 배경 이미지 위에 배치 */
     padding: 20px;
     background: rgba(255, 255, 255, 0.8); /* 배경을 약간 투명하게 설정 */
-    margin: 20px;
+    margin: 10px;
     border-radius: 10px;
 }
 
@@ -35,7 +37,7 @@
 
 .customer-service-root .customer-service-faq h2, 
 .customer-service-root .customer-service-contact h2 {
-    color: #4CAF50;
+    color: #1E90FF;
 }
 
 .customer-service-root .customer-service-question {
@@ -52,4 +54,37 @@
 
 .customer-service-root .customer-service-contact p {
     margin: 10px 0;
+}
+
+/* 다크모드 */
+
+.dark-mode  .background-image {
+    opacity: 0.7; /* 배경 투명도를 다크 모드에 맞게 약간 높임 */
+}
+
+.dark-mode .customer-service-content {
+    background: rgba(0, 0, 0, 0.8);
+    color: #DEDEDE;
+}
+
+.dark-mode .customer-service-root h1 {
+    color: #DEDEDE;
+}
+
+.dark-mode .customer-service-root .customer-service-faq h2, 
+.dark-mode .customer-service-root .customer-service-contact h2 {
+    color: #4169E1;
+}
+
+.dark-mode .customer-service-root .customer-service-question {
+    background-color: #333333;
+    border: 1px solid #929292;
+}
+
+.dark-mode .customer-service-root .customer-service-question h3 {
+    color: #DEDEDE;
+}
+
+.dark-mode .customer-service-root .customer-service-contact p {
+    color: #e4e4e4;
 }
