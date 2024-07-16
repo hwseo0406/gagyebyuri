@@ -16,7 +16,7 @@ const db = mysql.createConnection({
     port: '3306',
     user: 'root',
     password: 'admin',
-    database: 'llmdb'
+    database: 'accountbook'
 });
 
 db.connect(err => {
@@ -35,6 +35,7 @@ app.get('/api/check-db-connection', (req, res) => {
             res.status(500).send('Database connection failed');
         } else {
             res.send('Database connection successful');
+            console.log('성공');
         }
     });
 });
@@ -53,6 +54,77 @@ app.post('/api/login', (req, res) => {
         }
     });
 });
+
+//수입/지출 분석
+app.get('/api/item', async (req, res) => {
+    try {
+        const query = 'SELECT item_name, amount FROM items';
+        const accountquery = 'SELECT sender_name, amount FROM income';
+        
+        // Promise를 사용하여 두 개의 쿼리를 병렬로 실행
+        const [itemsResults, accountsResults] = await Promise.all([
+            new Promise((resolve, reject) => {
+                db.query(query, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(accountquery, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            })
+        ]);
+
+        // 응답 데이터 구조 생성
+        const responseData = {
+            items: itemsResults,
+            accounts: accountsResults
+        };
+
+        res.send(responseData);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send('Internal server error');
+    }
+});
+
+//월별 분석
+app.get('/api/semesteranalysis', async (req, res) => {
+    try {
+        const query = 'SELECT item_name, amount, item_date FROM items';
+        const accountQuery = 'SELECT sender_name, amount, sender_date FROM income';
+        
+        // Promise를 사용하여 두 개의 쿼리를 병렬로 실행
+        const [itemsResults, accountsResults] = await Promise.all([
+            new Promise((resolve, reject) => {
+                db.query(query, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(accountQuery, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            })
+        ]);
+
+        // 응답 데이터 구조 생성
+        const responseData = {
+            items: itemsResults,
+            accounts: accountsResults
+        };
+
+        res.send(responseData);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send('Internal server error');
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

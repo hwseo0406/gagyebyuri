@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-//import './ForeignCurrency.css'
+import './ForeignCurrency.css'
 
 function ForeignCurrency() {
   const [exchangeRates, setExchangeRates] = useState({});
