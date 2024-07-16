@@ -1,37 +1,19 @@
-import React, { useState } from 'react';
-// import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './IncomeModal.css';
 
-const IncomeModal = ({ isOpen, onClose, onSubmit }) => {
-  // const [file, setFile] = useState(null);
-  // const [fileUrl, setFileUrl] = useState(null);
-  // const [ownerName, setOwnerName] = useState('');
-  // const [accountBalance, setAccountBalance] = useState('');
+const IncomeModal = ({ isOpen, onClose, onSubmit, editData }) => {
   const [incomeItems, setIncomeItems] = useState([]);
 
+  useEffect(() => {
+    if (editData) {
+      setIncomeItems(editData.income || []);
+    } else {
+      setIncomeItems([]);
+    }
+  }, [editData]);
+
   if (!isOpen) return null;
-
-  // const handleFileChange = async (e) => {
-  //   const uploadedFile = e.target.files[0];
-  //   setFile(uploadedFile);
-  //   setFileUrl(URL.createObjectURL(uploadedFile));
-
-  //   const formData = new FormData();
-  //   formData.append('file', uploadedFile);
-
-  //   try {
-  //     const response = await axios.post('http://localhost:5000/income', formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     });
-  //     const { gptResult_income } = response.data;
-  //     setIncomeItems(gptResult_income.income);
-      
-  //   } catch (error) {
-  //     console.error('Error uploading file:', error);
-  //   }
-  // };
 
   const handleInputChange = (index, field, value) => {
     const updatedItems = [...incomeItems];
@@ -40,7 +22,21 @@ const IncomeModal = ({ isOpen, onClose, onSubmit }) => {
   };
 
   const handleAddItem = () => {
-    setIncomeItems([...incomeItems, { sender_name: '', amount: '' , sender_date: ''}]);
+    setIncomeItems([...incomeItems, { id: null, sender_name: '', amount: '', sender_date: '' }]);
+  };
+
+  const handleRemoveItem = async (index, itemId) => {
+    if (itemId) {
+      try {
+        await axios.delete(`http://localhost:5000/delete_income/${itemId}`);
+        console.log('삭제 성공');
+      } catch (error) {
+        console.error('Error deleting item:', error);
+      }
+    }
+    const updatedItems = [...incomeItems];
+    updatedItems.splice(index, 1);
+    setIncomeItems(updatedItems);
   };
 
   const handleFormSubmit = (e) => {
@@ -66,6 +62,7 @@ const IncomeModal = ({ isOpen, onClose, onSubmit }) => {
                   <th>수입 출처</th>
                   <th>금액</th>
                   <th>날짜</th>
+                  <th>삭제</th>
                 </tr>
               </thead>
               <tbody>
@@ -87,10 +84,13 @@ const IncomeModal = ({ isOpen, onClose, onSubmit }) => {
                     </td>
                     <td>
                       <input 
-                        type = "date" 
-                        value = {item.sender_date}
+                        type="date" 
+                        value={item.sender_date}
                         onChange={(e) => handleInputChange(index, 'sender_date', e.target.value)}
                       />
+                    </td>
+                    <td>
+                      <button type="button" onClick={() => handleRemoveItem(index, item.id)}>삭제</button>
                     </td>
                   </tr>
                 ))}

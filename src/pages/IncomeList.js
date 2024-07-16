@@ -16,6 +16,7 @@ const IncomeList = () => {
       fetchIncomes(nickname)
     }
   }, [nickname]);
+  
   const fetchIncomes = async (nickname) => {
     try {
       const response = await axios.get(`http://localhost:5000/income_list/${nickname}`);

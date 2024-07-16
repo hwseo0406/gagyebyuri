@@ -37,7 +37,6 @@ function Home() {
     <div>
       <div ref={sectionRef1} className="home-content1" style={{ opacity: opacity1 }}>
         <h1>사진으로 가계부 쓰기</h1>
-        <p>가계뷰리</p>
         <a href="/login" className="start-button">시작하기</a>
       </div>
       <div ref={sectionRef2} className="home-content" style={{ backgroundImage: `url(${background2})`, opacity: opacity2 }}>
