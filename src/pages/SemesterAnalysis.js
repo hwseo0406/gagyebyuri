@@ -5,7 +5,8 @@ import moment from 'moment';
 import './SemesterAnalysis.css';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF6666', '#66CCCC'];
-const DARK_MODE_COLORS = ['#000000', '#8A2BE2', '#9932CC', '#9400D3', '#8B008B', '#800080', '#4B0082'];
+const DARK_MODE_COLORS = ['#1976D2', '#4CAF50', '#FFD54F', '#FF7043', '#673AB7', '#E53935', '#3B6E7E'];
+
 
 const SemesterAnalysis = () => {
   const [incomeData, setIncomeData] = useState([]);
@@ -16,7 +17,7 @@ const SemesterAnalysis = () => {
   const [id, setId] = useState('');
   const [months, setMonths] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
-  const [updateId, setUpdateId] = useState(0); // updateId를 추가하여 차트 업데이트를 트리거합니다.
+  const [updateId, setUpdateId] = useState(0);
 
   const darkModeSetting = sessionStorage.getItem('darkMode');
 
@@ -26,20 +27,17 @@ const SemesterAnalysis = () => {
       setId(id);
       fetchData();
     }
-    if (darkModeSetting === 'true') {
-      setDarkMode(true);
-      document.body.classList.add('dark-mode');
-    }
-  }, [id, darkModeSetting]);
+    setUpdateId(updateId => updateId + 1);
+  }, [id]);
 
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
+    if (darkModeSetting === 'true') {
+      setDarkMode(true);
     } else {
-      document.body.classList.remove('dark-mode');
+      setDarkMode(false);
     }
-  }, [darkMode]);
-
+    setUpdateId(updateId => updateId + 1);
+  }, [darkModeSetting]);
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/semesteranalysis', { id });
@@ -76,11 +74,6 @@ const SemesterAnalysis = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const onDarkModeChange = useCallback(() => {
-    setDarkMode(!darkMode);
-    setUpdateId(updateId => updateId + 1); // darkMode가 변경될 때마다 updateId를 증가시켜 차트를 다시 렌더링합니다.
-  }, [darkMode]);
 
   const filteredIncomeData = incomeData.filter(account => account.date === selectedMonth);
   const filteredReceiptsData = receiptsData.filter(receipt => receipt.date === selectedMonth);
@@ -222,8 +215,6 @@ const SemesterAnalysis = () => {
           </table>
         </div>
       </div>
-
-      <button onClick={onDarkModeChange}>다크 모드 전환</button>
     </div>
   );
 };
