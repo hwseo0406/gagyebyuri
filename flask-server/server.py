@@ -12,6 +12,8 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import date, datetime
+from pymysql.cursors import DictCursor
+import json
 
 #환경변수
 load_dotenv() 
@@ -276,7 +278,7 @@ def delete_item(id):
     return jsonify({'message': '삭제 성공'})
 
 @app.route('/get_receipt/<int:id>', methods=['GET'])
-def get_receipt(id):
+def get_receipt_id(id):
     connection = get_db_connection()
     with connection.cursor() as cursor:
         sql = """
@@ -608,6 +610,91 @@ def delete_account():
         return jsonify({'success': True})
     finally:
         connection.close()
+
+#수입/지출 분석
+@app.route('/api/item', methods=['post'])
+def get_receipts_item():
+
+    data = request.json
+    id = data.get('id')
+
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+
+        sql = """
+        SELECT category AS name, total_cost AS amount FROM receipts WHERE nickname=%s
+        """
+
+        cursor.execute(sql, (id,))
+        items_results = cursor.fetchall()
         
+        sql2 = '''
+        SELECT sender_name AS name, amount FROM income WHERE nickname=%s
+        '''
+        cursor.execute(sql2, (id,))
+        accounts_results = cursor.fetchall()
+
+        response_data = {
+            'items': items_results,
+            'accounts': accounts_results
+        }
+
+        
+    connection.close()
+    return jsonify(response_data)
+
+#영수증 데이터 조회 API 엔드포인트
+@app.route('/api/receipts', methods=['post'])
+def get_receipts2():
+
+    data = request.json
+    id = data.get('id')
+
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+
+        sql = """
+        SELECT category AS name, SUM(total_cost) AS amount FROM receipts  WHERE nickname=%s GROUP BY category
+        """
+
+        cursor.execute(sql, (id,))
+        results = cursor.fetchall()
+        
+        
+    connection.close()
+    return jsonify(results)
+        
+
+#월별 분석
+@app.route('/api/semesteranalysis', methods=['post'])
+def semesteranalysis():
+
+    data = request.json
+    id = data.get('id')
+
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+
+        sql = '''
+        SELECT sender_name AS name, amount, sender_date AS date FROM income WHERE nickname=%s
+        '''
+        cursor.execute(sql, (id,))
+        incomeQuery = cursor.fetchall()
+
+        sql2 = '''
+        SELECT category AS name, total_cost AS amount, purchase_date AS date FROM receipts WHERE nickname=%s
+        '''
+        cursor.execute(sql2, (id,))
+        receiptsQuery = cursor.fetchall()
+
+        response_data = {
+            'accounts': incomeQuery,
+            'receipts': receiptsQuery
+        }
+
+        
+    connection.close()
+    return jsonify(response_data)
+    
 if __name__ == '__main__':
     app.run(debug=True)
