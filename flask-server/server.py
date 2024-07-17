@@ -79,70 +79,55 @@ def upload_file():
 
 
 # 수입 데이터를 업로드 받아 저장, OCR 및 GPT API로 텍스트 분석
-@app.route('/income', methods = ['POST'])
-def upload_income():
-    timestamp = int(time.time())
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['file']
-
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    
-    if file:
-        rename = f"{os.path.splitext(file.filename)[0]}_{timestamp}{os.path.splitext(file.filename)[1]}"
-        filename = os.path.join(UPLOAD_FOLDER, rename)
-        file.save(filename)
-        if use_test_data:
-            with open('json_file_income.json', 'r', encoding='utf-8') as f:
-                ocr_result = json.load(f)
-            infer_text = receipt_form(ocr_result)
-        else:
-            infer_text = ocr_image(filename)
-        
-        gpt_result_income = gptapi_income(infer_text)
-        
-        return jsonify({'inferText_income': infer_text, 'gptResult_income': gpt_result_income})
-
-#GPT API로부터 받은 데이터를 MySQL 데이터베이스에 저장
 @app.route('/save', methods=['POST'])
 def save_data():
     data = request.json
     nickname = data.get('nickname')
     gpt_result = data.get('gptResult')
 
+    if not gpt_result or not isinstance(gpt_result, dict):
+        return jsonify({'error': 'Invalid data format for gptResult'}), 400
+
     store_name = gpt_result.get('store_name')
     purchase_date = gpt_result.get('purchase_date')
     total_cost = gpt_result.get('total_cost')
-    category = gpt_result.get('category')  # 카테고리 값 가져오기
+    categories = gpt_result.get('category', '')
 
     # 날짜 형식 변환
     formatted_date = format_date(purchase_date)
 
+    if formatted_date is None:
+        return jsonify({'error': 'Invalid date format for purchase_date'}), 400
+
     connection = get_db_connection()
-    with connection.cursor() as cursor:
-        sql = """
-        INSERT INTO receipts (nickname, store_name, purchase_date, total_cost, category)
-        VALUES (%s, %s, %s, %s, %s)
-        """
-        cursor.execute(sql, (nickname, store_name, formatted_date, total_cost, category))
-        receipt_id = cursor.lastrowid
-
-        items = gpt_result.get('items', [])
-        for item in items:
-            item_name = item.get('item_name')
-            quantity = item.get('quantity')
-            amount = item.get('amount')
+    try:
+        with connection.cursor() as cursor:
             sql = """
-            INSERT INTO items (receipt_id, item_name, quantity, amount)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO receipts (nickname, store_name, purchase_date, total_cost, category)
+            VALUES (%s, %s, %s, %s, %s)
             """
-            cursor.execute(sql, (receipt_id, item_name, quantity, amount))
+            cursor.execute(sql, (nickname, store_name, formatted_date, total_cost, categories))
+            receipt_id = cursor.lastrowid
 
-    connection.commit()
-    connection.close()
+            items = gpt_result.get('items', [])
+            for item in items:
+                item_name = item.get('item_name')
+                quantity = item.get('quantity')
+                amount = item.get('amount')
+                sql = """
+                INSERT INTO items (receipt_id, item_name, quantity, amount)
+                VALUES (%s, %s, %s, %s)
+                """
+                cursor.execute(sql, (receipt_id, item_name, quantity, amount))
 
-    return jsonify({'message': '데이터 저장 성공'})
+        connection.commit()
+        return jsonify({'message': '데이터 저장 성공'})
+    except Exception as e:
+        connection.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        connection.close()
+
 
 @app.route('/incomesave', methods=['POST'])
 def save_data_income():
