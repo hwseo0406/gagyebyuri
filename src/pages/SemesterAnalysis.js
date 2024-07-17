@@ -67,11 +67,7 @@ const SemesterAnalysis = () => {
       setError('Failed to fetch data');
       setLoading(false);
     }
-  }, [id]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  }, []);
 
   const filteredIncomeData = incomeData.filter(account => account.date === selectedMonth);
   const filteredReceiptsData = receiptsData.filter(receipt => receipt.date === selectedMonth);

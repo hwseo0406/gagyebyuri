@@ -144,7 +144,7 @@
   }
 
   .dark-mode .semester-analysis th {
-    background-color: #666;
+    background-color: rgba(36, 111, 240, 0.692);
     color: #dedede;
   }
   
@@ -157,5 +157,5 @@
   }
   
   .dark-mode .semester-analysis .total-income {
-    background-color: #666;
+    background-color: #888888;
   }
