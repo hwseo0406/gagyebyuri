@@ -9,20 +9,20 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
   const [purchaseDate, setPurchaseDate] = useState('');
   const [totalCost, setTotalCost] = useState('');
   const [items, setItems] = useState([]);
-  const [category, setCategory] = useState(''); // 카테고리
+  const [selectedCategories, setSelectedCategories] = useState(''); 
 
   useEffect(() => {
     if (editData) {
       setStoreName(editData.store_name);
       setPurchaseDate(editData.purchase_date);
       setTotalCost(editData.total_cost);
-      setCategory(editData.category); // 카테고리
+      setSelectedCategories(editData.category);
       fetchItems(editData.id);
     } else {
       setStoreName('');
       setPurchaseDate('');
       setTotalCost('');
-      setCategory('');
+      setSelectedCategories('');
       setItems([]);
     }
   }, [editData]);
@@ -56,11 +56,21 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
       setStoreName(gptResult.store_name);
       setPurchaseDate(gptResult.purchase_date);
       setTotalCost(gptResult.total_cost);
-      setCategory(gptResult.category); // 카테고리 설정
+      setSelectedCategories(gptResult.category); // 카테고리 설정
       setItems(gptResult.items);
     } catch (error) {
       console.error('Error uploading file:', error);
     }
+  };
+
+  const handleCategoryChange = (event) => {
+    const selectedOptions = Array.from(event.target.selectedOptions).map(option => option.value);
+    const newSelectedCategories = {
+      food: selectedOptions.includes('food'),
+      transportation: selectedOptions.includes('transportation'),
+      shopping: selectedOptions.includes('shopping')
+    };
+    setSelectedCategories(newSelectedCategories);
   };
 
   const handleInputChange = (index, field, value) => {
@@ -95,8 +105,15 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
       purchase_date: purchaseDate,
       total_cost: totalCost,
       items: items,
-      category: category // 카테고리 추가
+      category: selectedCategories // 카테고리 추가
     };
+    setFile(null)
+    setFileUrl(null)
+    setStoreName('');
+    setPurchaseDate('');
+    setTotalCost('');
+    setSelectedCategories('');
+    setItems([]);
     onSubmit(formData);
     onClose();
   };
@@ -113,7 +130,15 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
           <h4>가게 이름</h4>
           <input type="text" className="exmodal-input" placeholder="가게 이름" value={storeName} onChange={(e) => setStoreName(e.target.value)} required />
           <h4>카테고리</h4>
-          {/* 카테고리 입력 필드 */}
+          <fieldset className='exmodal-input'>
+            <label>
+              <select value={Object.keys(selectedCategories).filter(key => selectedCategories[key])} onChange={handleCategoryChange} className='categorie-label'>
+                <option value="food">음식</option>
+                <option value="transportation">교통</option>
+                <option value="shopping">쇼핑</option>
+              </select>
+            </label>
+          </fieldset>
           <h4>총 가격</h4>
           <input type="number" className="exmodal-input" placeholder="총 가격" value={totalCost} onChange={(e) => setTotalCost(e.target.value)} required />
           <h4>영수증 업로드</h4>
