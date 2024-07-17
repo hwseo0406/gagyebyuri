@@ -11,19 +11,17 @@ const Analysis = () => {
   const [receiptsData, setReceiptsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [id, setId] = useState('')
   const [darkMode, setDarkMode] = useState(false);
   const [updateId, setUpdateId] = useState(0);
 
   const darkModeSetting = sessionStorage.getItem('darkMode');
+  const id = sessionStorage.getItem('id');
 
   useEffect(() => {
-    const id = sessionStorage.getItem('id');
     if (id) {
-      setId(id);
       fetchData();
     }
-  }, [id]);
+  }, []);
   
   useEffect(() => {
     if (darkModeSetting === 'true') {
