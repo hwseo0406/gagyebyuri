@@ -77,7 +77,7 @@ function Home() {
               <Route path="/income/list" element={<IncomeList />} />
               <Route path="/ForeignCurrency" element={<ForeignCurrency />} />
               <Route path="/account/my-page" element={<MyPage name={name}/>} />
-              <Route path="/analysis/semester" element={<SemesterAnalysis />} />
+              <Route path="/analysis/semester" element={<SemesterAnalysis/>} />
               <Route path="/" element={<Main name={name} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

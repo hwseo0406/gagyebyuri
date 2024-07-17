@@ -3,13 +3,19 @@ import axios from 'axios';
 import './IncomeModal.css';
 
 const IncomeModal = ({ isOpen, onClose, onSubmit, editData }) => {
-  const [incomeItems, setIncomeItems] = useState([]);
+  const [incomeItems, setIncomeItems] = useState([
+    { id: null, sender_name: '', amount: '', sender_date: '' }
+  ]);
 
   useEffect(() => {
     if (editData) {
-      setIncomeItems(editData.income || []);
+      setIncomeItems(editData.income || [
+        { id: null, sender_name: '', amount: '', sender_date: '' }
+      ]);
     } else {
-      setIncomeItems([]);
+      setIncomeItems([
+        { id: null, sender_name: '', amount: '', sender_date: '' }
+      ]);
     }
   }, [editData]);
 
@@ -44,6 +50,9 @@ const IncomeModal = ({ isOpen, onClose, onSubmit, editData }) => {
     const formData = {
       income: incomeItems,
     };
+    setIncomeItems([
+      { id: null, sender_name: '', amount: '', sender_date: '' }
+    ]);
     onSubmit(formData);
     onClose();
   };
