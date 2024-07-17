@@ -41,9 +41,6 @@ const Analysis = () => {
       const responseItem = await axios.post('http://localhost:5000/api/item', postData);
       const responseReceipts = await axios.post(`http://localhost:5000/api/receipts`, postData);
   
-      console.log('Item API Response:', responseItem.data);
-      console.log('Receipts API Response:', responseReceipts.data);
-  
       const formattedIncomeData = responseItem.data.accounts.map(account => ({
         name: account.name,
         amount: parseFloat(account.amount)
@@ -53,9 +50,6 @@ const Analysis = () => {
         name: receipt.name,
         price: parseFloat(receipt.amount) // Adjust this based on actual field name
       }));
-  
-      console.log('Formatted Income Data:', formattedIncomeData);
-      console.log('Formatted Receipts Data:', formattedReceiptsData);
   
       setIncomeData(formattedIncomeData);
       setReceiptsData(formattedReceiptsData);

@@ -96,7 +96,7 @@
   }
   
   .dark-mode th {
-    background-color: #555;
+    background-color: rgba(36, 111, 240, 0.692);
   }
   
   .dark-mode tr:nth-child(even) {
@@ -108,5 +108,5 @@
   }
   
   .dark-mode .total-income {
-    background-color: #555;
+    background-color: #888888;
   }
