@@ -4,6 +4,7 @@ import './Analysis.css';
 import axios from 'axios';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF6666', '#66CCCC'];
+const DARK_MODE_COLORS = ['#1976D2', '#4CAF50', '#FFD54F', '#FF7043', '#673AB7', '#E53935', '#3B6E7E'];
 
 const Analysis = () => {
   const [incomeData, setIncomeData] = useState([]);
@@ -11,15 +12,27 @@ const Analysis = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [id, setId] = useState('')
+  const [darkMode, setDarkMode] = useState(false);
+  const [updateId, setUpdateId] = useState(0);
+
+  const darkModeSetting = sessionStorage.getItem('darkMode');
 
   useEffect(() => {
     const id = sessionStorage.getItem('id');
     if (id) {
       setId(id);
       fetchData();
-
     }
   }, [id]);
+  
+  useEffect(() => {
+    if (darkModeSetting === 'true') {
+      setDarkMode(true);
+    } else {
+      setDarkMode(false);
+    }
+    setUpdateId(updateId => updateId + 1);
+  }, [darkModeSetting]);
 
   const postData = {
     id: id
@@ -91,7 +104,10 @@ const Analysis = () => {
                 label={priceLabel}
               >
                 {incomeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                   <Cell
+                   key={`cell-${index}`}
+                   fill={darkMode ? DARK_MODE_COLORS[index % DARK_MODE_COLORS.length] : COLORS[index % COLORS.length]}
+                 />
                 ))}
               </Pie>
               <Tooltip />
@@ -114,7 +130,10 @@ const Analysis = () => {
                 label={priceLabel}
               >
                 {receiptsData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={darkMode ? DARK_MODE_COLORS[index % DARK_MODE_COLORS.length] : COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
