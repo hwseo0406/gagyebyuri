@@ -134,9 +134,9 @@ const ExpenseModal = ({ isOpen, onClose, onSubmit, editData }) => {
           <h4>카테고리</h4>
           <select value={selectedCategory} onChange={handleCategoryChange} className='exmodal-input'>
             <option value="">카테고리 선택</option>
-            <option value="food">음식</option>
-            <option value="transportation">교통</option>
-            <option value="shopping">쇼핑</option>
+            <option value="음식">음식</option>
+            <option value="교통">교통</option>
+            <option value="쇼핑">쇼핑</option>
           </select>
           <h4>총 가격</h4>
           <input type="number" className="exmodal-input" placeholder="총 가격" value={totalCost} onChange={(e) => setTotalCost(e.target.value)} required />

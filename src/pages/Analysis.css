@@ -74,3 +74,39 @@
   font-size: 18px;
   background-color: #f4f4f4;
 }
+
+  /* 다크모드 */
+
+  .dark-mode .chart-container {
+    background-color: #444;
+    color: #DEDEDE;
+  }
+  
+  .dark-mode .tables-container {
+    background-color: #444;
+  }
+  
+  .dark-mode .table-container {
+    background-color: #444;
+    color: #DEDEDE;
+  }
+  
+  .dark-mode .table-title {
+    color: #DEDEDE;
+  }
+  
+  .dark-mode th {
+    background-color: #555;
+  }
+  
+  .dark-mode tr:nth-child(even) {
+    background-color: #666;
+  }
+  
+  .dark-mode tr:hover {
+    background-color: #555;
+  }
+  
+  .dark-mode .total-income {
+    background-color: #555;
+  }

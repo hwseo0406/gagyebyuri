@@ -136,14 +136,26 @@
 
   .dark-mode .semester-analysis .charts-container,
   .dark-mode .semester-analysis .tables-container,
-  .dark-mode .semester-analysis .table-title,
-  .dark-mode .semester-analysis th,
-  .dark-mode .semester-analysis td,
-  .dark-mode .semester-analysis tr:nth-child(even),
-  .dark-mode .semester-analysis tr:hover,
-  .dark-mode .semester-analysis .total-income {
+  .dark-mode .semester-analysis .table-title{
     background-color: #444;
     border-color: #929292;
     color: #DEDEDE;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark-mode .semester-analysis th {
+    background-color: #666;
+    color: #dedede;
+  }
+  
+  .dark-mode .semester-analysis tr:nth-child(even) {
+    background-color: #666;
+  }
+  
+  .dark-mode .semester-analysis tr:hover {
+    background-color: #555;
+  }
+  
+  .dark-mode .semester-analysis .total-income {
+    background-color: #666;
   }

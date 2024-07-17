@@ -38,6 +38,7 @@ const SemesterAnalysis = () => {
     }
     setUpdateId(updateId => updateId + 1);
   }, [darkModeSetting]);
+  
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/semesteranalysis', { id });
