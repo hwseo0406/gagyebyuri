@@ -112,6 +112,11 @@
   width: 115px;
 }
 
+.exmodal-input .categorie-label {
+  width: 100%;
+  font-size: 12pt;
+ }
+
 .exmodal-table td button {
   display: block;
   margin: 0 auto; /* 가운데 정렬 */
@@ -199,3 +204,9 @@
   color: #DEDEDE;
   border: 1px solid #666;
 }
+
+.dark-mode .exmodal-input .categorie-label {
+  color: #DEDEDE;
+  background-color: #757575;
+  border: 1px solid #666;
+ }

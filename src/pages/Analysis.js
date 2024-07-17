@@ -6,36 +6,48 @@ import axios from 'axios';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF6666', '#66CCCC'];
 
 const Analysis = () => {
-  const [itemData, setItemData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
+  const [receiptsData, setReceiptsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [id, setId] = useState('')
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const id = sessionStorage.getItem('id');
+    if (id) {
+      setId(id);
+      fetchData();
+
+    }
+  }, [id]);
+
+  const postData = {
+    id: id
+  };
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:9000/api/item');
-
-      console.log('API Response:', response.data);
-
-      const formattedItemData = response.data.items.map(item => ({
-        name: item.item_name,
-        price: parseFloat(item.amount)
-      }));
-
-      const formattedIncomeData = response.data.accounts.map(account => ({
-        name: account.sender_name,
+      const responseItem = await axios.post('http://localhost:5000/api/item', postData);
+      const responseReceipts = await axios.post(`http://localhost:5000/api/receipts`, postData);
+  
+      console.log('Item API Response:', responseItem.data);
+      console.log('Receipts API Response:', responseReceipts.data);
+  
+      const formattedIncomeData = responseItem.data.accounts.map(account => ({
+        name: account.name,
         amount: parseFloat(account.amount)
       }));
-
-      console.log('Formatted Item Data:', formattedItemData);
+  
+      const formattedReceiptsData = responseReceipts.data.map(receipt => ({
+        name: receipt.name,
+        price: parseFloat(receipt.amount) // Adjust this based on actual field name
+      }));
+  
       console.log('Formatted Income Data:', formattedIncomeData);
-
-      setItemData(formattedItemData);
+      console.log('Formatted Receipts Data:', formattedReceiptsData);
+  
       setIncomeData(formattedIncomeData);
+      setReceiptsData(formattedReceiptsData);
       setLoading(false);
     } catch (error) {
       console.log('Error fetching data', error);
@@ -43,13 +55,14 @@ const Analysis = () => {
       setLoading(false);
     }
   };
+  
 
   const priceLabel = ({ value }) => {
     return `${value} 원`;
   };
 
-  const totalItemAmount = itemData.reduce((sum, item) => sum + item.price, 0);
   const totalIncomeAmount = incomeData.reduce((sum, account) => sum + account.amount, 0);
+  const totalReceiptsAmount = receiptsData.reduce((sum, receipt) => sum + receipt.price, 0);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -60,12 +73,12 @@ const Analysis = () => {
   }
 
   return (
-    <div>
+    <div className='analyis'>
       <h1>수입/지출 분석</h1>
 
       <div className='charts-container'>
         <div className='chart-container'>
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={500}>
             <PieChart>
               <Pie
                 dataKey="amount"
@@ -88,19 +101,19 @@ const Analysis = () => {
         </div>
 
         <div className='chart-container'>
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={500}>
             <PieChart>
               <Pie
                 dataKey="price"
                 isAnimationActive={true}
-                data={itemData}
+                data={receiptsData}
                 cx="50%"
                 cy="50%"
                 outerRadius="80%"
                 fill="#8884d8"
                 label={priceLabel}
               >
-                {itemData.map((entry, index) => (
+                {receiptsData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -136,23 +149,23 @@ const Analysis = () => {
         </div>
 
         <div className="table-container">
-          <h3 className="table-title">지출 상세 내역</h3>
+          <h3 className="table-title">영수증 상세 내역</h3>
           <table>
             <thead>
               <tr>
-                <th>항목</th>
+                <th>카테고리</th>
                 <th>금액 (원)</th>
               </tr>
             </thead>
             <tbody>
-              {itemData.map((item, index) => (
+              {receiptsData.map((receipt, index) => (
                 <tr key={index}>
-                  <td>{item.name}</td>
-                  <td>{item.price}</td>
+                  <td>{receipt.name}</td>
+                  <td>{receipt.price}</td>
                 </tr>
               ))}
               <tr>
-                <td colSpan="2" className="total-income">총 금액 : {totalItemAmount} 원</td>
+                <td colSpan="2" className="total-income">총 금액 : {totalReceiptsAmount} 원</td>
               </tr>
             </tbody>
           </table>
