@@ -14,21 +14,18 @@ const SemesterAnalysis = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState('');
-  const [id, setId] = useState('');
   const [months, setMonths] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
   const [updateId, setUpdateId] = useState(0);
 
   const darkModeSetting = sessionStorage.getItem('darkMode');
+  const id = sessionStorage.getItem('id');
 
   useEffect(() => {
-    const id = sessionStorage.getItem('id');
     if (id) {
-      setId(id);
       fetchData();
     }
-    setUpdateId(updateId => updateId + 1);
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     if (darkModeSetting === 'true') {
@@ -38,7 +35,7 @@ const SemesterAnalysis = () => {
     }
     setUpdateId(updateId => updateId + 1);
   }, [darkModeSetting]);
-  
+
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/semesteranalysis', { id });
