@@ -7,11 +7,9 @@
 
 ![페이지 4](./pdf_img/004.png)
 
-![페이지 5](./pdf_img/005.png)
-
 ![페이지 6](./pdf_img/006.png)
 
-![페이지 7](./pdf_img/007.pngg)
+![페이지 7](./pdf_img/007.png)
 
 ![페이지 8](./pdf_img/008.png)
 
