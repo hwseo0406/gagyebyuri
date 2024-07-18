@@ -1,70 +1,44 @@
-# Getting Started with Create React App
+# 프로젝트 결과 보고서
+![페이지 1](./pdf_img/001.png)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![페이지 2](./pdf_img/002.png)
 
-## Available Scripts
+![페이지 3](./pdf_img/003.png)
 
-In the project directory, you can run:
+![페이지 4](./pdf_img/004.png)
 
-### `npm start`
+![페이지 5](./pdf_img/005.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+![페이지 6](./pdf_img/006.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![페이지 7](./pdf_img/007.pngg)
 
-### `npm test`
+![페이지 8](./pdf_img/008.png)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![페이지 9](./pdf_img/009.png)
 
-### `npm run build`
+![페이지 10](./pdf_img/010.png)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![페이지 11](./pdf_img/011.png)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![페이지 12](./pdf_img/012.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![페이지 13](./pdf_img/013.png)
 
-### `npm run eject`
+![페이지 14](./pdf_img/014.png)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+![페이지 15](./pdf_img/015.png)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![페이지 16](./pdf_img/016.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+![페이지 17](./pdf_img/017.png)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+![페이지 18](./pdf_img/018.png)
 
-## Learn More
+![페이지 19](./pdf_img/019.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+![페이지 20](./pdf_img/020.png)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+![페이지 21](./pdf_img/021.png)
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![페이지 22](./pdf_img/022.png)
